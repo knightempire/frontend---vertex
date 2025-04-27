@@ -116,13 +116,14 @@ const Login = () => {
   return (
     <div className="h-screen w-full flex items-center justify-center" style={{ background: milkyWhite }}>
       <div className="w-full max-w-md p-8 rounded-xl shadow-lg" style={{ backgroundColor: 'white' }}>
-      <div className="flex justify-center mb-6" onClick={() => navigate('/')}>
+      <div className="flex justify-center mb-6" onClick={() => navigate('/feed')}> 
+      {/* onClick={() => navigate('/forgot-password')}   */}
           <img src="https://images.ctfassets.net/tyqyfq36jzv2/4LDyHu4fEajllYmI8y5bj7/124bcfb1b6a522326d7d90ac1e3debc8/Linkedin-logo-png.png" alt="Company Logo" className="h-12 cursor-pointer" />
         </div>
 
         
         <h2 className="text-2xl font-bold text-center mb-6" style={{ color: darkColor }}>
-          Log in to your account
+          Log in to your account 
         </h2>
         
         <form onSubmit={handleSubmit}>
