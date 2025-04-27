@@ -20,6 +20,11 @@ import Game from './game/game';
 import ChatBot from './dashboard/chat'
 import Collection from './dashboard/collection';
 
+import BusinessSimulaton from './game/BusinessSimulation';
+import CrossClimb from './game/CrossClimb';
+import Queens from './game/Queens';
+import Inference from './game/Inference';
+
 const App = () => {
   return (
     <Router>
@@ -44,11 +49,17 @@ const AppRoutes = () => {
         <Route path="/cards" element={<Cards />} />
         <Route path="/password" element={<PasswordSettings />} />+
         <Route path="/feed" element={<RedditFeed />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/viewprofile" element={<ViewProfile />} />
+        <Route path="/editprofile" element={<Profile />} />
+        <Route path="/profile" element={<ViewProfile />} />
         <Route path="/connections" element={<ConnectionsPage />} />
-        <Route path="/game" element={<Game />} />
         <Route path='/collection' element={<Collection />} />
+
+        <Route path="/game" element={<Game />} />
+        <Route path="/game/business-simulation" element={<BusinessSimulaton />} />
+        <Route path="/game/queens" element={<Queens />} />
+        <Route path="/game/crossclimb" element={<CrossClimb />} />
+        <Route path="/game/inference" element={<Inference />} />
+
 
 
         {/* Admin routes */}

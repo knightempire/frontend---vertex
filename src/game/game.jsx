@@ -1,47 +1,36 @@
-import React, { useState } from 'react';
-import { FaHome, FaSearch, FaUserCircle, FaBell, FaLinkedin } from 'react-icons/fa';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import Nav from './nav';
 
-const Navbar = ({ onSearch }) => {
-  const primaryColor = "#0073b1"; // LinkedIn-like blue
-  const [inputValue, setInputValue] = useState('');
+const Game = () => {
+  const navigate = useNavigate();
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
-    setInputValue(value);
-    onSearch(value); // Pass the search term to parent component
-  };
+  const games = [
+    { name: 'Bingo', path: '/game/business-simulation' },
+    { name: 'Queens', path: '/game/queens' },
+    { name: 'CrossClimb', path: '/game/crossclimb' },
+    { name: 'Pinpoint', path: '/game/inference' },
+  ];
 
   return (
-    <div className="bg-[#0073b1] p-4 shadow-md">
-      <div className="flex items-center justify-between max-w-7xl mx-auto">
-        {/* Logo */}
-        <div className="flex items-center space-x-2">
-          <FaLinkedin className="text-white text-3xl" />
-          <span className="text-white text-2xl font-bold hidden sm:block">LinkedIn</span>
-        </div>
-
-        {/* Search Bar */}
-        <div className="flex items-center bg-white rounded-full px-4 py-2 w-1/3 max-w-lg shadow-md focus-within:ring-2 focus-within:ring-blue-600">
-          <FaSearch className="text-gray-500 text-lg" />
-          <input
-            type="text"
-            placeholder="Search"
-            className="w-full bg-transparent border-none outline-none px-2 py-1 text-sm font-medium"
-            value={inputValue}
-            onChange={handleSearch}
-            autoComplete="off"
-          />
-        </div>
-
-        {/* Icons */}
-        <div className="flex items-center space-x-6">
-          <FaHome className="text-white text-xl cursor-pointer hover:text-gray-200 transition-colors duration-300" />
-          <FaBell className="text-white text-xl cursor-pointer hover:text-gray-200 transition-colors duration-300" />
-          <FaUserCircle className="text-white text-xl cursor-pointer hover:text-gray-200 transition-colors duration-300" />
+    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-blue-300">
+      <Nav />
+      <div className="max-w-4xl mx-auto p-8 text-center">
+        <h1 className="text-4xl font-bold text-[#0073b1] mb-10">Choose Your Game</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {games.map((game, index) => (
+            <button
+              key={index}
+              onClick={() => navigate(game.path)}
+              className="bg-white shadow-lg rounded-2xl p-6 hover:bg-[#0073b1] hover:text-white transition-all duration-300 text-xl font-semibold"
+            >
+              {game.name}
+            </button>
+          ))}
         </div>
       </div>
     </div>
   );
 };
 
-export default Navbar;
+export default Game;

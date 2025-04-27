@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FaArrowLeft, FaArrowRight, FaEdit } from 'react-icons/fa';
 import Navbar from './Navbar';
+import { useNavigate } from 'react-router-dom';
+
 
 const ViewProfile = () => {
   // Mock profile data as const within the component
@@ -49,6 +51,8 @@ const ViewProfile = () => {
   };
 
   const [currentDate, setCurrentDate] = useState(new Date());
+
+    const navigate = useNavigate();
 
   const getMonthName = (date) => {
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -129,10 +133,14 @@ const ViewProfile = () => {
     </div>
 
     {/* Edit Button */}
-    <button className="text-[#0073b1] flex items-center space-x-2 mt-4 sm:mt-0">
-      <FaEdit />
-      <span>Edit Profile</span>
-    </button>
+    <button 
+  className="text-[#0073b1] flex items-center space-x-2 mt-4 sm:mt-0" 
+  onClick={() => navigate('/editprofile')}
+>
+  <FaEdit />
+  <span>Edit Profile</span>
+</button>
+
   </div>
 </div>
 
