@@ -1,0 +1,28 @@
+# Ignore node_modules directory
+node_modules/
+
+# Ignore log files
+*.log
+
+# Ignore environment variables file (if sensitive)
+.env
+
+# Ignore Dockerfile and .dockerignore to avoid including them in the image
+Dockerfile
+.dockerignore
+
+# Ignore the build output directory (for Vite's build process)
+dist/
+
+# Ignore .git directory and files
+.git/
+
+# Ignore IDE/editor specific files
+.vscode/
+.idea/
+
+# Ignore temporary files or OS-specific files
+*.swp
+*.bak
+Thumbs.db
+.DS_Store
