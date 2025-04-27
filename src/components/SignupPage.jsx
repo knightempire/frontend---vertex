@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-import logo from '../assets/vertx.png';
+import logo from '../assets/linkendin.png';
 
 const SignupPage = () => {
     const [email, setEmail] = useState('');

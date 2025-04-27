@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import logo from '../assets/vertx.png';
+import logo from '../assets/linkendin.png';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const Dashboard = () => {
   const grayText = "#666666";
 
   useEffect(() => {
-    const tokenFromStorage = localStorage.getItem("vertx");
+    const tokenFromStorage = localStorage.getItem("linkendin");
     console.log("Token from localStorage:", tokenFromStorage);
   
     if (!tokenFromStorage) {
@@ -60,7 +60,7 @@ const Dashboard = () => {
                 const user = data.user;
     
                 if (user.isActive === false) {
-                  localStorage.removeItem("vertx");
+                  localStorage.removeItem("linkendin");
                   setToken(null);
                   console.log("Token removed from localStorage due to inactive user");
                   navigate('/');
@@ -72,7 +72,7 @@ const Dashboard = () => {
                   const updatedToken = data.token;  // Initialize updatedToken here
                   setToken(updatedToken);  // Update state with the new token
                   const base64Name = btoa(data.user.name);
-                  localStorage.setItem('vertx', JSON.stringify({ token: updatedToken, name: base64Name }));
+                  localStorage.setItem('linkendin', JSON.stringify({ token: updatedToken, name: base64Name }));
                   console.log("Token updated in localStorage:", updatedToken);
                 }
     
@@ -160,7 +160,7 @@ const Dashboard = () => {
           }
         } else if (response.status === 401) {
           // Token is invalid, so navigate to login page
-          localStorage.removeItem("vertx");
+          localStorage.removeItem("linkendin");
           setToken(null);
           navigate('/login');
           console.error("Token is not valid! Redirecting to login.");
@@ -234,7 +234,7 @@ const Dashboard = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("vertx");
+    localStorage.removeItem("linkendin");
     setToken(null);
     navigate('/');
   };
@@ -494,7 +494,7 @@ const Dashboard = () => {
 
       <footer className="py-4 px-6 text-xs text-gray-500 border-t border-gray-200 mt-auto">
         <div className="container mx-auto">
-          Copyright © 2025, by vertx.io
+          Copyright © 2025, by linkendin.io
         </div>
       </footer>
     </div>

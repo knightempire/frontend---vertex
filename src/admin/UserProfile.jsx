@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
-import logo from '../assets/vertx.png';
+import logo from '../assets/linkendin.png';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -38,7 +38,7 @@ const UserProfile = () => {
 
   // Fetch the token and verify it
   useEffect(() => {
-    const tokenFromStorage = localStorage.getItem("vertx");
+    const tokenFromStorage = localStorage.getItem("linkendin");
 
     if (!tokenFromStorage) {
       navigate('/login'); // Redirect to login if no token

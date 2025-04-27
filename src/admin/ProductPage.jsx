@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
-import logo from '../assets/vertx.png';
+import logo from '../assets/linkendin.png';
 import { useNavigate } from 'react-router-dom';
 
 const ProductsPage = () => {
@@ -47,7 +47,7 @@ const ProductsPage = () => {
   const navigate = useNavigate();
   // Fetch products from API
   useEffect(() => {
-    const tokenFromStorage = localStorage.getItem("vertx");
+    const tokenFromStorage = localStorage.getItem("linkendin");
     if (!tokenFromStorage) {
       navigate('/login');
       return;

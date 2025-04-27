@@ -12,7 +12,7 @@ import UsersPage from './admin/UsersPage';
 import ProductsPage from './admin/ProductPage';
 import UserRequestsPage from './admin/UserRequestsPage'; // Import the new component
 import UserProfile from './admin/UserProfile';
-import RedditFeed from './components/RedditFeed';
+import RedditFeed from './dashboard/RedditFeed';
 
 const App = () => {
   return (

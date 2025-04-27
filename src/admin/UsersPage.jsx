@@ -11,7 +11,7 @@ import {
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import UserProfile from './UserProfile';
-import logo from '../assets/vertx.png';
+import logo from '../assets/linkendin.png';
 import { useNavigate } from 'react-router-dom';
 
 const UsersPage = () => {
@@ -36,7 +36,7 @@ const UsersPage = () => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    const tokenFromStorage = localStorage.getItem("vertx");
+    const tokenFromStorage = localStorage.getItem("linkendin");
     console.log("Token from localStorage:", tokenFromStorage);
   
     if (!tokenFromStorage) {

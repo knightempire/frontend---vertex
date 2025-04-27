@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Activity, Database, Layers, BarChart2, Map, Zap } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
-import logo from '../assets/vertx.png';
+import logo from '../assets/linkendin.png';
 
 const Dashboard = () => {
   const [seismicLines, setSeismicLines] = useState([]);

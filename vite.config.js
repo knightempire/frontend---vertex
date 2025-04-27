@@ -20,7 +20,7 @@ export default defineConfig({
     port: 8080,
     host: '0.0.0.0',
     allowedHosts: [
-      'vertx-home-dve6brb4hde5cqbz.centralindia-01.azurewebsites.net' // Explicitly allow this host
+      'linkendin-home-dve6brb4hde5cqbz.centralindia-01.azurewebsites.net' // Explicitly allow this host
     ]
   },
 });

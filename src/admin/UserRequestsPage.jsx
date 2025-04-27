@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
-import logo from '../assets/vertx.png';
+import logo from '../assets/linkendin.png';
 import { useNavigate } from 'react-router-dom';
 
 const UserRequestsPage = () => {
@@ -39,7 +39,7 @@ const UserRequestsPage = () => {
 
   // Fetch user requests from API
   useEffect(() => {
-    const tokenFromStorage = localStorage.getItem("vertx");
+    const tokenFromStorage = localStorage.getItem("linkendin");
     console.log("Token from localStorage:", tokenFromStorage);
 
     if (!tokenFromStorage) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import logo from '../assets/vertx.png';
+import logo from '../assets/linkendin.png';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -32,7 +32,7 @@ const Login = () => {
         const errorData = await response.json();
         console.error('Token verification failed:', errorData);
         // Remove the token from localStorage if verification fails
-        localStorage.removeItem('vertx');
+        localStorage.removeItem('linkendin');
         return;
       }
 
@@ -47,7 +47,7 @@ const Login = () => {
 
   // Check token on component mount (onload)
   useEffect(() => {
-    const storedData = localStorage.getItem('vertx');
+    const storedData = localStorage.getItem('linkendin');
     if (storedData) {
       const { token } = JSON.parse(storedData);
       if (token) {
@@ -99,7 +99,7 @@ const Login = () => {
         console.log(data);
 
         const base64Name = btoa(data.user.name); 
-        localStorage.setItem('vertx', JSON.stringify({ token: data.token, name: base64Name }));
+        localStorage.setItem('linkendin', JSON.stringify({ token: data.token, name: base64Name }));
         navigate('/cards');
       } else {
         console.log(data);

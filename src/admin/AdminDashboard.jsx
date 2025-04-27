@@ -11,7 +11,7 @@ import {
   CreditCard,
   Layers
 } from 'lucide-react';
-import logo from '../assets/vertx.png';
+import logo from '../assets/linkendin.png';
 
 // Import our new components
 import Sidebar from './Sidebar';
