@@ -1,24 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Swal from 'sweetalert2';
-import moment from 'moment'; // Import moment.js
-import Navbar from './Navbar'; // Import Navbar component
-import { FaThumbsUp, FaShareAlt, FaBookmark } from 'react-icons/fa'; // Importing icons from react-icons
+import moment from 'moment';
+import Navbar from './Navbar';
+import { FaThumbsUp, FaShareAlt, FaBookmark } from 'react-icons/fa';
+import { FaUserPlus } from 'react-icons/fa';
+
 
 const RedditFeed = () => {
-  const [posts, setPosts] = useState([]); // Stores posts
-  const [loading, setLoading] = useState(false); // To control loading state
-  const feedEndRef = useRef(null); // Reference for the end of the feed to trigger more posts
-  const [after, setAfter] = useState(null); // Pagination 'after' value for Reddit API
-  const [searchTerm, setSearchTerm] = useState(''); // Search term for filtering posts
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [trendingPosts, setTrendingPosts] = useState([]);
+  const [peopleYouMightKnow, setPeopleYouMightKnow] = useState([
+    { name: 'Alice Johnson', username: 'alice123', bio: 'Web Developer' },
+    { name: 'Bob Smith', username: 'bob_smith', bio: 'Graphic Designer' },
+    { name: 'Charlie Brown', username: 'charlie_b', bio: 'Product Manager' },
+    { name: 'David Lee', username: 'david_lee', bio: 'Data Scientist' },
+    { name: 'Eva White', username: 'eva_white', bio: 'Software Engineer' },
+  ]);
+  const feedEndRef = useRef(null);
+  const [after, setAfter] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const primaryColor = "#0073b1"; // LinkedIn-like blue
-  const milkyWhite = "#f5f5f7"; // Light gray background
-  const darkColor = "#333"; // Darker text color for readability
-  const lightGray = "#dfe3e8"; // Lighter gray for borders and dividers
+  const primaryColor = "#0073b1";
+  const milkyWhite = "#f5f5f7";
+  const darkColor = "#333";
+  const lightGray = "#dfe3e8";
 
   // Convert UTC timestamp to Asia timezone (IST) in dd-mm-yyyy hh:mm format using moment
   const formatDate = (timestamp) => {
-    return moment.unix(timestamp).utcOffset(330).format('DD-MM-YYYY HH:mm'); // Asia/Calcutta (UTC+5:30)
+    return moment.unix(timestamp).utcOffset(330).format('DD-MM-YYYY HH:mm');
   };
 
   // Fetch posts from Reddit based on the search term
@@ -89,14 +99,56 @@ const RedditFeed = () => {
     }
   };
 
-  // Fetch initial posts when component is mounted or searchTerm changes
+  // Fetch the top trending posts from Reddit
+  const fetchTrendingPosts = async () => {
+    try {
+      const response = await fetch('https://www.reddit.com/r/all/top.json?limit=5'); // Limit to 5 trending posts
+      const data = await response.json();
+
+      if (response.ok) {
+        const trendingPostsData = data.data.children.map((post) => ({
+          title: post.data.title,
+          url: post.data.url,
+          score: post.data.score,
+          author: post.data.author,
+          subreddit: post.data.subreddit,
+          num_comments: post.data.num_comments,
+        }));
+
+        trendingPostsData.sort((a, b) => {
+          if (b.score === a.score) {
+            return b.num_comments - a.num_comments;
+          }
+          return b.score - a.score;
+        });
+
+        setTrendingPosts(trendingPostsData);
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: 'Could not fetch trending posts. Please try again later.',
+          icon: 'error',
+          confirmButtonColor: primaryColor,
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching trending posts:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'An unexpected error occurred while fetching trending posts.',
+        icon: 'error',
+        confirmButtonColor: primaryColor,
+      });
+    }
+  };
+
   useEffect(() => {
     fetchPosts();
-  }, [searchTerm]); // Re-fetch posts when the search term changes
+    fetchTrendingPosts();
+  }, [searchTerm]);
 
-  // Function to handle Like, Share, Save click
   const handlePostAction = (action, post) => {
-    console.log(`Action: ${action} | Post ID: ${post.id} `);
+    console.log(`Action: ${action} | Post ID: ${post.id}`);
   };
 
   const renderMedia = (post) => {
@@ -121,15 +173,14 @@ const RedditFeed = () => {
       );
     }
 
-    return null; // No media
+    return null;
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navbar onSearch={(term) => setSearchTerm(term)} /> {/* Pass search handler to Navbar */}
+      <Navbar onSearch={(term) => setSearchTerm(term)} />
 
       <div className="flex flex-col sm:flex-row">
-
         <div className="w-full sm:w-1/4 p-6 bg-[#f5f5f7] top-0 z-10">
           <div className="bg-white p-4 rounded-xl shadow-md">
             <img src="https://via.placeholder.com/150" alt="Profile" className="w-32 h-32 rounded-full mx-auto mb-4" />
@@ -147,7 +198,7 @@ const RedditFeed = () => {
           <div className="space-y-6 mt-6">
             {posts.map((post, index) => (
               <div
-                key={`${post.id}-${index}`} // Using a combination of post.id and index to ensure unique key
+                key={`${post.id}-${index}`}
                 className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6 border border-[#dfe3e8]"
               >
                 <h3 className="font-semibold text-xl text-gray-800 hover:text-[#0073b1] mb-3">
@@ -164,7 +215,7 @@ const RedditFeed = () => {
                   </span>
                 </p>
 
-                {renderMedia(post)} {/* This is where we render the image or video */}
+                {renderMedia(post)}
 
                 <a
                   href={post.url}
@@ -176,11 +227,10 @@ const RedditFeed = () => {
                 </a>
 
                 <div className="flex justify-between items-center mt-4 text-sm text-gray-600">
-                  <p>Score: {post.score}</p>
+                  <p>like: {post.score}</p>
                   <p>Comments: {post.num_comments}</p>
                 </div>
 
-                {/* Action Icons: Like, Share, Save */}
                 <div className="flex justify-start space-x-4 mt-4">
                   <FaThumbsUp
                     onClick={() => handlePostAction('Like', post)}
@@ -221,31 +271,48 @@ const RedditFeed = () => {
         {/* Right Sidebar: Scorable content (scrollable) */}
         <div className="w-full sm:w-1/4 p-6 bg-[#f5f5f7] hidden sm:block">
           <div className="bg-white p-4 rounded-xl shadow-md mb-6">
-            <h3 className="text-xl font-semibold text-[#0073b1] mb-4">Scoreboard</h3>
+            <h3 className="text-xl font-semibold text-[#0073b1] mb-4">Trending</h3>
             <ul>
-              <li className="flex justify-between text-sm text-gray-600 mb-3">
-                <span>User1</span>
-                <span>Score: 150</span>
-              </li>
-              <li className="flex justify-between text-sm text-gray-600 mb-3">
-                <span>User2</span>
-                <span>Score: 120</span>
-              </li>
-              <li className="flex justify-between text-sm text-gray-600 mb-3">
-                <span>User3</span>
-                <span>Score: 100</span>
-              </li>
+              {trendingPosts.map((post, index) => (
+                <li key={index} className="text-sm text-gray-600 mb-3">
+                  <a href={post.url} className="text-[#0073b1] hover:text-[#005682]" target="_blank" rel="noopener noreferrer">
+                    {post.title}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
-          <div className="bg-white p-4 rounded-xl shadow-md">
-            <h3 className="text-xl font-semibold text-[#0073b1] mb-4">Trending</h3>
-            <ul>
-              <li className="text-sm text-gray-600 mb-3">Post 1 - Top Trend</li>
-              <li className="text-sm text-gray-600 mb-3">Post 2 - Trending Now</li>
-              <li className="text-sm text-gray-600 mb-3">Post 3 - Hot Topic</li>
-            </ul>
-          </div>
+          {/* People You Might Know */}
+
+<div className="bg-white p-4 rounded-xl shadow-md relative">
+  <h3 className="text-xl font-semibold text-[#0073b1] mb-4">People You Might Know</h3>
+  
+  {/* View More button positioned in the top-right */}
+  <button className="absolute top-4 right-4 text-sm text-[#0073b1] hover:text-[#005682]">
+    View More
+  </button>
+
+  <ul>
+    {peopleYouMightKnow.map((person, index) => (
+      <li key={index} className="mb-4 flex justify-between items-center">
+        <div className="flex flex-col">
+          <h4 className="font-semibold text-gray-800">{person.name}</h4>
+          <p className="text-sm text-gray-500">@{person.username}</p>
+          <p className="text-xs text-gray-400">{person.bio}</p>
+        </div>
+        <div className="flex justify-end items-center space-x-4">
+          <button className="px-4 py-2 bg-[#0073b1] text-white rounded-full flex items-center space-x-2 hover:bg-[#005682] text-sm">
+            <FaUserPlus className="text-white" />
+            <span>Connect</span>
+          </button>
+        </div>
+      </li>
+    ))}
+  </ul>
+</div>
+
+
         </div>
       </div>
     </div>

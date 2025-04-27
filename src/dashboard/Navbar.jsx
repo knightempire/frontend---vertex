@@ -17,26 +17,27 @@ const Navbar = ({ onSearch }) => {
         {/* Logo */}
         <div className="flex items-center space-x-2">
           <FaLinkedin className="text-white text-3xl" />
-          <span className="text-white text-xl font-semibold hidden sm:block">LinkedIn</span>
+          <span className="text-white text-2xl font-bold hidden sm:block">LinkedIn</span>
         </div>
 
         {/* Search Bar */}
-        <div className="flex items-center bg-white rounded-full px-4 py-2 w-1/3 max-w-md">
-          <FaSearch className="text-gray-500" />
+        <div className="flex items-center bg-white rounded-full px-4 py-2 w-1/3 max-w-lg shadow-md focus-within:ring-2 focus-within:ring-blue-600">
+          <FaSearch className="text-gray-500 text-lg" />
           <input
             type="text"
             placeholder="Search"
-            className="w-full bg-transparent border-none outline-none px-2 py-1"
+            className="w-full bg-transparent border-none outline-none px-2 py-1 text-sm font-medium"
             value={inputValue}
             onChange={handleSearch}
+            autoComplete="off"
           />
         </div>
 
         {/* Icons */}
         <div className="flex items-center space-x-6">
-          <FaHome className="text-white text-xl cursor-pointer" />
-          <FaBell className="text-white text-xl cursor-pointer" />
-          <FaUserCircle className="text-white text-xl cursor-pointer" />
+          <FaHome className="text-white text-xl cursor-pointer hover:text-gray-200 transition-colors duration-300" />
+          <FaBell className="text-white text-xl cursor-pointer hover:text-gray-200 transition-colors duration-300" />
+          <FaUserCircle className="text-white text-xl cursor-pointer hover:text-gray-200 transition-colors duration-300" />
         </div>
       </div>
     </div>
