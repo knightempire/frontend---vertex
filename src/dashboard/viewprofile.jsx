@@ -1,5 +1,6 @@
-import React from 'react';
-import { FaEdit } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { FaArrowLeft, FaArrowRight, FaEdit } from 'react-icons/fa'; // Icons for month navigation
+
 import Navbar from './Navbar';  // Assuming you have a Navbar component
 
 const ViewProfile = () => {
@@ -48,35 +49,74 @@ const ViewProfile = () => {
     ], // Mock login dates
   };
 
-  // Function to calculate the maximum number of consecutive login days
-  const calculateMaxConsecutiveDays = (loginDates) => {
-    if (!loginDates || loginDates.length === 0) return 0;
+  // State to manage the current month and year
+  const [currentDate, setCurrentDate] = useState(new Date());
 
-    // Sort the login dates
-    const sortedDates = loginDates.map(date => new Date(date)).sort((a, b) => a - b);
-
-    let maxStreak = 1;
-    let currentStreak = 1;
-
-    for (let i = 1; i < sortedDates.length; i++) {
-      const prevDate = sortedDates[i - 1];
-      const currentDate = sortedDates[i];
-      const diff = (currentDate - prevDate) / (1000 * 3600 * 24); // Difference in days
-
-      if (diff === 1) {
-        currentStreak++;
-      } else {
-        currentStreak = 1;
-      }
-
-      maxStreak = Math.max(maxStreak, currentStreak);
-    }
-
-    return maxStreak;
+  // Function to get the name of the current month and year
+  const getMonthName = (date) => {
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return `${months[date.getMonth()]} ${date.getFullYear()}`;
   };
 
-  const maxConsecutiveDays = calculateMaxConsecutiveDays(profileData.loginDates);
+  // Function to handle moving to the previous month
+  const goToPreviousMonth = () => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(currentDate.getMonth() - 1);
+    setCurrentDate(newDate);
+  };
 
+  // Function to handle moving to the next month
+  const goToNextMonth = () => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(currentDate.getMonth() + 1);
+    setCurrentDate(newDate);
+  };
+
+  const getCalendarDates = () => {
+    const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    const numDaysInMonth = endOfMonth.getDate();
+  
+
+    const startDayOfWeek = (startOfMonth.getDay() === 0 ? 6 : startOfMonth.getDay() - 1);
+  
+    const calendarDates = [];
+  
+
+    for (let i = 0; i < startDayOfWeek; i++) {
+      calendarDates.push(null); 
+    }
+  
+
+    for (let i = 2; i <= numDaysInMonth; i++) {
+      const day = new Date(currentDate.getFullYear(), currentDate.getMonth(), i).toISOString().split('T')[0]; 
+      calendarDates.push(day);
+    }
+  
+
+    const nextDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1).toISOString().split('T')[0];
+    calendarDates.push(nextDay); 
+
+    const totalSlots = 42;
+    const remainingDays = totalSlots - calendarDates.length; 
+  
+    for (let i = 0; i < remainingDays; i++) {
+      calendarDates.push(null); 
+    }
+  
+
+    const finalCalendarDates = calendarDates.slice(0, totalSlots); 
+    return finalCalendarDates;
+};
+  
+  
+  
+  
+
+  const maxConsecutiveDays = 5;
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Navbar */}
@@ -178,27 +218,47 @@ const ViewProfile = () => {
               <h3 className="text-xl font-semibold text-[#0073b1] mb-6">Login Streak</h3>
               <p className="text-gray-600 mb-4">Max Consecutive Login Days: <span className="font-semibold text-[#0073b1]">{maxConsecutiveDays}</span></p>
 
-              <div className="grid grid-cols-7 gap-x-1 gap-y-2 mt-4">
-                {/* Generate a calendar view of login days */}
-                {Array.from({ length: 30 }, (_, i) => {
-                  const currentDate = new Date();
-                  currentDate.setDate(currentDate.getDate() - i);
-                  const dateString = currentDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
-                  const isLoggedIn = profileData.loginDates.includes(dateString);
-
-                  return (
-                    <div
-                      key={i}
-                      className={`w-8 h-8 rounded-lg transition-all duration-200 ${isLoggedIn ? 'bg-green-500' : 'bg-gray-300'} 
-                      ${isLoggedIn ? 'hover:bg-green-600' : 'hover:bg-gray-400'} cursor-pointer flex justify-center items-center`}
-                    >
-                      <span className={`text-xs font-medium ${isLoggedIn ? 'text-white' : 'text-gray-700'}`}>
-                        {currentDate.getDate()}
-                      </span>
-                    </div>
-                  );
-                })}
+              {/* Month Navigation */}
+              <div className="flex justify-between items-center mb-4">
+                <button onClick={goToPreviousMonth} className="text-gray-600 hover:text-[#0073b1]">
+                  <FaArrowLeft />
+                </button>
+                <h4 className="text-lg font-semibold text-[#0073b1]">{getMonthName(currentDate)}</h4>
+                <button onClick={goToNextMonth} className="text-gray-600 hover:text-[#0073b1]">
+                  <FaArrowRight />
+                </button>
               </div>
+
+              {/* Calendar View */}
+              <div className="grid grid-cols-7 gap-x-1 gap-y-2 mt-4">
+  {/* Generate a calendar view of login days */}
+  {getCalendarDates().map((date, index) => {
+    if (!date) {
+      return (
+        <div key={index} className="w-8 h-8"></div> // Empty space for null values
+      );
+    }
+    
+    const isLoggedIn = profileData.loginDates.includes(date);
+    const currentDateObj = new Date(date);
+    
+    // Check if the date is within the current month
+    const isCurrentMonth = currentDateObj.getMonth() === currentDate.getMonth() && currentDateObj.getFullYear() === currentDate.getFullYear();
+    
+    return (
+      <div
+        key={index}
+        className={`w-8 h-8 rounded-lg transition-all duration-200 ${isLoggedIn && isCurrentMonth ? 'bg-green-500' : 'bg-gray-300'} 
+        ${isLoggedIn && isCurrentMonth ? 'hover:bg-green-600' : 'hover:bg-gray-400'} cursor-pointer flex justify-center items-center`}
+      >
+        <span className={`text-xs font-medium ${isLoggedIn && isCurrentMonth ? 'text-white' : 'text-gray-700'}`}>
+          {currentDateObj.getDate()}
+        </span>
+      </div>
+    );
+  })}
+</div>
+
 
               <p className="text-sm text-gray-500 mt-4">Days marked in green represent the days you logged in. Keep the streak going!</p>
             </div>
