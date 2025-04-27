@@ -18,7 +18,7 @@ import ViewProfile from './dashboard/viewprofile';
 import ConnectionsPage from './dashboard/Connection';
 import Game from './game/game';
 import ChatBot from './dashboard/chat'
-
+import Collection from './dashboard/collection';
 
 const App = () => {
   return (
@@ -48,6 +48,8 @@ const AppRoutes = () => {
         <Route path="/viewprofile" element={<ViewProfile />} />
         <Route path="/connections" element={<ConnectionsPage />} />
         <Route path="/game" element={<Game />} />
+        <Route path='/collection' element={<Collection />} />
+
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminDashboard />} />
