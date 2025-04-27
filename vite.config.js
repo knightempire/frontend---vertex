@@ -11,16 +11,18 @@ export default defineConfig({
     hmr: {
       clientPort: 8080,
     },
+    historyApiFallback: true, // Add this line to handle routes fallback to index.html
   },
   build: {
     sourcemap: true,
     outDir: 'dist',
+    base: '/', // Ensure base path is root
   },
   preview: {
     port: 8080,
     host: '0.0.0.0',
     allowedHosts: [
       'https://linkedin-one-lilac.vercel.app/' // Explicitly allow this host
-    ]
+    ],
   },
 });
