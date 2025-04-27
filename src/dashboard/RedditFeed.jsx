@@ -4,9 +4,10 @@ import moment from 'moment';
 import Navbar from './Navbar';
 import { FaThumbsUp, FaShareAlt, FaBookmark } from 'react-icons/fa';
 import { FaUserPlus } from 'react-icons/fa';
-
+import { useNavigate } from 'react-router-dom';
 
 const RedditFeed = () => {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [trendingPosts, setTrendingPosts] = useState([]);
@@ -289,7 +290,8 @@ const RedditFeed = () => {
   <h3 className="text-xl font-semibold text-[#0073b1] mb-4">People You Might Know</h3>
   
   {/* View More button positioned in the top-right */}
-  <button className="absolute top-4 right-4 text-sm text-[#0073b1] hover:text-[#005682]">
+  <button className="absolute top-4 right-4 text-sm text-[#0073b1] hover:text-[#005682]"
+    onClick={() => navigate('/connections')}>
     View More
   </button>
 

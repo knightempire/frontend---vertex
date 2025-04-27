@@ -15,6 +15,9 @@ import UserProfile from './admin/UserProfile';
 import RedditFeed from './dashboard/RedditFeed';
 import Profile from './dashboard/profile';
 import ViewProfile from './dashboard/viewprofile';
+import ConnectionsPage from './dashboard/Connection';
+import Game from './game/game';
+
 
 const App = () => {
   return (
@@ -42,7 +45,8 @@ const AppRoutes = () => {
         <Route path="/feed" element={<RedditFeed />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/viewprofile" element={<ViewProfile />} />
-
+        <Route path="/connections" element={<ConnectionsPage />} />
+        <Route path="/game" element={<Game />} />
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminDashboard />} />

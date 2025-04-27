@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaArrowLeft, FaArrowRight, FaEdit } from 'react-icons/fa';
-import Navbar from './Navbar'; 
+import Navbar from './Navbar';
 
 const ViewProfile = () => {
   // Mock profile data as const within the component
@@ -109,29 +109,33 @@ const ViewProfile = () => {
       <Navbar />
 
       <div className="flex justify-center items-start p-6 mt-6">
-        <div className="w-full max-w-6xl flex space-x-8">
+        <div className="w-full max-w-6xl flex flex-col md:flex-row space-y-8 md:space-y-0 md:space-x-8">
           {/* Left Section */}
-          <div className="w-2/3 space-y-8">
+          <div className="w-full md:w-2/3 space-y-8">
             {/* Profile Picture and Cover Photo */}
             <div className="bg-white p-6 rounded-xl shadow-md">
-              <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center space-x-4">
-                  <img
-                    src={profileData.profilePicture || 'https://via.placeholder.com/150'}
-                    alt="Profile"
-                    className="w-32 h-32 rounded-full object-cover border-2 border-[#0073b1]"
-                  />
-                  <div>
-                    <h2 className="text-2xl font-semibold text-[#0073b1]">{profileData.name}</h2>
-                    <p className="text-lg text-gray-600">{profileData.jobTitle}</p>
-                  </div>
-                </div>
-                <button className="text-[#0073b1] flex items-center space-x-2">
-                  <FaEdit />
-                  <span>Edit Profile</span>
-                </button>
-              </div>
-            </div>
+  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6">
+    {/* Profile Info Section */}
+    <div className="flex sm:flex-row sm:space-x-4 items-center justify-center sm:justify-start">
+      <img
+        src={profileData.profilePicture || 'https://via.placeholder.com/150'}
+        alt="Profile"
+        className="w-32 h-32 rounded-full object-cover border-2 border-[#0073b1] mb-4 sm:mb-0"
+      />
+      <div>
+        <h2 className="text-2xl font-semibold text-[#0073b1]">{profileData.name}</h2>
+        <p className="text-lg text-gray-600">{profileData.jobTitle}</p>
+      </div>
+    </div>
+
+    {/* Edit Button */}
+    <button className="text-[#0073b1] flex items-center space-x-2 mt-4 sm:mt-0">
+      <FaEdit />
+      <span>Edit Profile</span>
+    </button>
+  </div>
+</div>
+
 
             {/* Bio */}
             <div className="bg-white p-6 rounded-xl shadow-md">
@@ -196,7 +200,7 @@ const ViewProfile = () => {
           </div>
 
           {/* Right Section - Login Streak and Score */}
-          <div className="w-1/3">
+          <div className="w-full md:w-1/3">
             {/* Login Streak */}
             <div className="bg-white p-6 rounded-xl shadow-md">
               <h3 className="text-xl font-semibold text-[#0073b1] mb-6">Login Streak</h3>
