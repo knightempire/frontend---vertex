@@ -6,8 +6,9 @@ const Navbar = ({ onSearch }) => {
   const [inputValue, setInputValue] = useState('');
 
   const handleSearch = (e) => {
-    setInputValue(e.target.value);
-    onSearch(e.target.value); // Pass the search term to parent component
+    const value = e.target.value;
+    setInputValue(value);
+    onSearch(value); // Pass the search term to parent component
   };
 
   return (
