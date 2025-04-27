@@ -1,0 +1,194 @@
+import React, { useState } from 'react';
+
+const ChatBot = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeUser, setActiveUser] = useState(null);
+
+  // List of users with unread messages
+  const users = [
+    {
+      id: 1,
+      name: 'John Doe',
+      profilePic: 'https://via.placeholder.com/50?text=JD',
+      lastMessage: 'Hey, I need help with a project.',
+      unreadCount: 3, // Unread messages count
+      chatHistory: [
+        { sender: 'user', text: 'Hey, I need help with a project.', time: new Date() },
+        { sender: 'bot', text: 'Sure! What do you need help with?', time: new Date() },
+        { sender: 'user', text: 'Can you clarify something about the project?', time: new Date() },
+        { sender: 'bot', text: 'Of course, what do you need clarification on?', time: new Date() },
+      ]
+    },
+    {
+      id: 2,
+      name: 'Jane Smith',
+      profilePic: 'https://via.placeholder.com/50?text=JS',
+      lastMessage: 'Can you tell me more about your services?',
+      unreadCount: 1,
+      chatHistory: [
+        { sender: 'user', text: 'Can you tell me more about your services?', time: new Date() },
+        { sender: 'bot', text: 'Of course! What would you like to know?', time: new Date() },
+      ]
+    },
+    {
+      id: 3,
+      name: 'Makar AI',
+      profilePic: 'https://via.placeholder.com/50?text=AI',
+      lastMessage: 'Hello! How can I assist you today?',
+      unreadCount: 0,
+      chatHistory: [
+        { sender: 'bot', text: 'Hello! How can I assist you today?', time: new Date() },
+      ]
+    },
+  ];
+
+  const toggleChat = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleUserClick = (user) => {
+    setActiveUser(user);
+    // Mark the messages as read once user clicks on the conversation
+    if (user.unreadCount > 0) {
+      const updatedUser = {
+        ...user,
+        unreadCount: 0,
+      };
+      users[users.findIndex((u) => u.id === user.id)] = updatedUser;
+      setActiveUser(updatedUser);
+    }
+  };
+
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    const message = e.target.message.value;
+    if (message.trim() && activeUser) {
+      const newMessage = { sender: 'user', text: message, time: new Date() };
+      const updatedUser = {
+        ...activeUser,
+        chatHistory: [...activeUser.chatHistory, newMessage],
+      };
+      users[users.findIndex((user) => user.id === activeUser.id)] = updatedUser;
+      setActiveUser(updatedUser);
+      e.target.reset();
+    }
+  };
+
+  const formatTime = (time) => {
+    const options = { hour: '2-digit', minute: '2-digit' };
+    return new Intl.DateTimeFormat('en-US', options).format(time);
+  };
+
+  const getLastMessageTime = (chatHistory) => {
+    const lastMessage = chatHistory[chatHistory.length - 1];
+    return lastMessage ? formatTime(lastMessage.time) : '';
+  };
+
+  return (
+    <div className="flex flex-col items-center">
+      {/* Chat Toggle Button */}
+      <button
+        className="fixed bottom-6 right-6 w-14 h-14 rounded-full flex items-center justify-center shadow-lg z-50 text-white bg-blue-500 transition-transform hover:scale-110"
+        onClick={toggleChat}
+        aria-label="Toggle chat"
+      >
+        {isOpen ? (
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+        )}
+      </button>
+
+      {/* Chat Window */}
+      <div
+        className={`fixed bottom-24 right-6 w-80 sm:w-96 bg-white rounded-lg shadow-xl z-40 flex flex-col transition-all duration-300 ease-in-out ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}
+        style={{ height: '500px', maxHeight: 'calc(100vh - 120px)' }}
+      >
+        {/* Header (Back Button and Active User Name) */}
+        <div className="p-4 rounded-t-lg text-white flex items-center justify-between bg-blue-500">
+          {activeUser ? (
+            <>
+              <button
+                onClick={() => setActiveUser(null)}
+                className="text-white hover:bg-blue-700 p-2 rounded-full"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 12H5"></path>
+                </svg>
+              </button>
+              <span className="font-semibold">{activeUser.name}</span>
+            </>
+          ) : (
+            <h3 className="font-semibold">Message</h3>
+          )}
+        </div>
+
+        {/* User List (Chat History Previews) */}
+        {!activeUser ? (
+          <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
+            {users.map((user) => (
+              <div
+                key={user.id}
+                className="flex items-center space-x-4 p-2 cursor-pointer hover:bg-gray-100"
+                onClick={() => handleUserClick(user)}
+              >
+                <img
+                  src={user.profilePic}
+                  alt={user.name}
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+                <div className="flex-1">
+                  <div className="font-semibold">{user.name}</div>
+                  <div className="text-sm text-gray-500">
+                    {user.lastMessage} <span className="text-xs text-gray-400">{getLastMessageTime(user.chatHistory)}</span>
+                  </div>
+                </div>
+                {user.unreadCount > 0 && (
+                  <div className="bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center">
+                    {user.unreadCount}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
+            {/* Active User Chat History */}
+            {activeUser.chatHistory.map((message, index) => (
+              <div key={index} className={`mb-4 ${message.sender === 'user' ? 'text-right' : ''}`}>
+                <div
+                  className={`p-3 rounded-lg ${message.sender === 'user' ? 'bg-indigo-100 text-indigo-900 rounded-tr-none' : 'bg-white text-gray-800 border border-gray-200 rounded-tl-none shadow-sm'}`}
+                >
+                  {message.text}
+                  <div className="text-xs text-gray-400 mt-1">{formatTime(message.time)}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Message Input */}
+        {activeUser && (
+          <form onSubmit={handleSendMessage} className="flex items-center p-4 bg-gray-100 rounded-b-lg">
+            <input
+              name="message"
+              type="text"
+              placeholder="Type a message..."
+              className="flex-1 p-2 rounded-l-lg bg-white border border-gray-300"
+            />
+            <button type="submit" className="ml-2 p-2 bg-blue-500 text-white rounded-r-lg">
+              Send
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ChatBot;

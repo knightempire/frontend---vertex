@@ -17,6 +17,7 @@ import Profile from './dashboard/profile';
 import ViewProfile from './dashboard/viewprofile';
 import ConnectionsPage from './dashboard/Connection';
 import Game from './game/game';
+import ChatBot from './dashboard/chat'
 
 
 const App = () => {
@@ -56,7 +57,8 @@ const AppRoutes = () => {
         <Route path="/admin/requests" element={<UserRequestsPage />} /> {/* New route for User Requests */}
       </Routes>
       
-      {/* ChatBot is outside the Routes so it appears on all pages except password settings and admin routes */}
+      {!isAdminRoute && location.pathname !== '/password' && <ChatBot />}
+
 
     </>
   );
