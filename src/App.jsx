@@ -13,6 +13,7 @@ import ProductsPage from './admin/ProductPage';
 import UserRequestsPage from './admin/UserRequestsPage'; // Import the new component
 import UserProfile from './admin/UserProfile';
 import RedditFeed from './dashboard/RedditFeed';
+import Profile from './dashboard/profile';
 
 const App = () => {
   return (
@@ -38,7 +39,8 @@ const AppRoutes = () => {
         <Route path="/cards" element={<Cards />} />
         <Route path="/password" element={<PasswordSettings />} />+
         <Route path="/feed" element={<RedditFeed />} />
-        
+        <Route path="/profile" element={<Profile />} />
+
         {/* Admin routes */}
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/products" element={<ProductsPage />} />
