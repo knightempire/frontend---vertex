@@ -20,7 +20,7 @@ export default defineConfig({
     port: 8080,
     host: '0.0.0.0',
     allowedHosts: [
-      'linkendin-home-dve6brb4hde5cqbz.centralindia-01.azurewebsites.net' // Explicitly allow this host
+      'https://linkedin-one-lilac.vercel.app/' // Explicitly allow this host
     ]
   },
 });
