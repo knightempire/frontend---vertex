@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { FaArrowLeft, FaArrowRight, FaEdit } from 'react-icons/fa'; // Icons for month navigation
-
-import Navbar from './Navbar';  // Assuming you have a Navbar component
+import { FaArrowLeft, FaArrowRight, FaEdit } from 'react-icons/fa';
+import Navbar from './Navbar'; 
 
 const ViewProfile = () => {
   // Mock profile data as const within the component
@@ -43,32 +42,25 @@ const ViewProfile = () => {
     ],
     profilePicture: 'https://via.placeholder.com/150',
     loginDates: [
-      '2025-04-01', '2025-04-02', '2025-04-03', // Sample login dates
+      '2025-04-01', '2025-04-02', '2025-04-03', 
       '2025-04-05', '2025-04-06', '2025-04-07',
       '2025-04-10', '2025-04-12', '2025-04-13',
     ], // Mock login dates
   };
 
-  // State to manage the current month and year
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  // Function to get the name of the current month and year
   const getMonthName = (date) => {
-    const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     return `${months[date.getMonth()]} ${date.getFullYear()}`;
   };
 
-  // Function to handle moving to the previous month
   const goToPreviousMonth = () => {
     const newDate = new Date(currentDate);
     newDate.setMonth(currentDate.getMonth() - 1);
     setCurrentDate(newDate);
   };
 
-  // Function to handle moving to the next month
   const goToNextMonth = () => {
     const newDate = new Date(currentDate);
     newDate.setMonth(currentDate.getMonth() + 1);
@@ -79,44 +71,38 @@ const ViewProfile = () => {
     const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
     const numDaysInMonth = endOfMonth.getDate();
-  
-
     const startDayOfWeek = (startOfMonth.getDay() === 0 ? 6 : startOfMonth.getDay() - 1);
-  
     const calendarDates = [];
-  
 
     for (let i = 0; i < startDayOfWeek; i++) {
-      calendarDates.push(null); 
+      calendarDates.push(null);
     }
-  
 
     for (let i = 2; i <= numDaysInMonth; i++) {
-      const day = new Date(currentDate.getFullYear(), currentDate.getMonth(), i).toISOString().split('T')[0]; 
+      const day = new Date(currentDate.getFullYear(), currentDate.getMonth(), i).toISOString().split('T')[0];
       calendarDates.push(day);
     }
-  
-
-    const nextDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1).toISOString().split('T')[0];
-    calendarDates.push(nextDay); 
 
     const totalSlots = 42;
-    const remainingDays = totalSlots - calendarDates.length; 
-  
+    const remainingDays = totalSlots - calendarDates.length;
     for (let i = 0; i < remainingDays; i++) {
-      calendarDates.push(null); 
+      calendarDates.push(null);
     }
-  
 
-    const finalCalendarDates = calendarDates.slice(0, totalSlots); 
-    return finalCalendarDates;
-};
-  
-  
-  
-  
+    return calendarDates.slice(0, totalSlots);
+  };
 
   const maxConsecutiveDays = 5;
+
+  // Mock monthly score data
+  const monthlyScores = [
+    { month: 'January', score: 60 },
+    { month: 'February', score: 80 },
+    { month: 'March', score: 55 },
+    { month: 'April', score: 70 },
+    { month: 'May', score: 90 },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Navbar */}
@@ -124,7 +110,7 @@ const ViewProfile = () => {
 
       <div className="flex justify-center items-start p-6 mt-6">
         <div className="w-full max-w-6xl flex space-x-8">
-          {/* Left Section (2/3) */}
+          {/* Left Section */}
           <div className="w-2/3 space-y-8">
             {/* Profile Picture and Cover Photo */}
             <div className="bg-white p-6 rounded-xl shadow-md">
@@ -147,7 +133,7 @@ const ViewProfile = () => {
               </div>
             </div>
 
-            {/* Bio and Personal Info */}
+            {/* Bio */}
             <div className="bg-white p-6 rounded-xl shadow-md">
               <h3 className="text-xl font-semibold text-[#0073b1] mb-6">About</h3>
               <p className="text-gray-600">{profileData.bio}</p>
@@ -158,10 +144,7 @@ const ViewProfile = () => {
               <h3 className="text-xl font-semibold text-[#0073b1] mb-6">Skills</h3>
               <div className="flex flex-wrap space-x-4">
                 {profileData.skills.map((skill, index) => (
-                  <span
-                    key={index}
-                    className="bg-[#f3f4f6] text-gray-600 px-4 py-2 rounded-full text-sm"
-                  >
+                  <span key={index} className="bg-[#f3f4f6] text-gray-600 px-4 py-2 rounded-full text-sm">
                     {skill}
                   </span>
                 ))}
@@ -212,8 +195,9 @@ const ViewProfile = () => {
             </div>
           </div>
 
-          {/* Right Section (1/3) - Login Streak */}
+          {/* Right Section - Login Streak and Score */}
           <div className="w-1/3">
+            {/* Login Streak */}
             <div className="bg-white p-6 rounded-xl shadow-md">
               <h3 className="text-xl font-semibold text-[#0073b1] mb-6">Login Streak</h3>
               <p className="text-gray-600 mb-4">Max Consecutive Login Days: <span className="font-semibold text-[#0073b1]">{maxConsecutiveDays}</span></p>
@@ -231,36 +215,50 @@ const ViewProfile = () => {
 
               {/* Calendar View */}
               <div className="grid grid-cols-7 gap-x-1 gap-y-2 mt-4">
-  {/* Generate a calendar view of login days */}
-  {getCalendarDates().map((date, index) => {
-    if (!date) {
-      return (
-        <div key={index} className="w-8 h-8"></div> // Empty space for null values
-      );
-    }
-    
-    const isLoggedIn = profileData.loginDates.includes(date);
-    const currentDateObj = new Date(date);
-    
-    // Check if the date is within the current month
-    const isCurrentMonth = currentDateObj.getMonth() === currentDate.getMonth() && currentDateObj.getFullYear() === currentDate.getFullYear();
-    
-    return (
-      <div
-        key={index}
-        className={`w-8 h-8 rounded-lg transition-all duration-200 ${isLoggedIn && isCurrentMonth ? 'bg-green-500' : 'bg-gray-300'} 
-        ${isLoggedIn && isCurrentMonth ? 'hover:bg-green-600' : 'hover:bg-gray-400'} cursor-pointer flex justify-center items-center`}
-      >
-        <span className={`text-xs font-medium ${isLoggedIn && isCurrentMonth ? 'text-white' : 'text-gray-700'}`}>
-          {currentDateObj.getDate()}
-        </span>
-      </div>
-    );
-  })}
-</div>
+                {getCalendarDates().map((date, index) => {
+                  if (!date) {
+                    return <div key={index} className="w-8 h-8"></div>;
+                  }
+                  const isLoggedIn = profileData.loginDates.includes(date);
+                  const currentDateObj = new Date(date);
+                  const isCurrentMonth = currentDateObj.getMonth() === currentDate.getMonth() && currentDateObj.getFullYear() === currentDate.getFullYear();
 
-
+                  return (
+                    <div
+                      key={index}
+                      className={`w-8 h-8 rounded-lg transition-all duration-200 ${isLoggedIn && isCurrentMonth ? 'bg-green-500' : 'bg-gray-300'} 
+                      ${isLoggedIn && isCurrentMonth ? 'hover:bg-green-600' : 'hover:bg-gray-400'} cursor-pointer flex justify-center items-center`}
+                    >
+                      <span className={`text-xs font-medium ${isLoggedIn && isCurrentMonth ? 'text-white' : 'text-gray-700'}`}>
+                        {currentDateObj.getDate()}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
               <p className="text-sm text-gray-500 mt-4">Days marked in green represent the days you logged in. Keep the streak going!</p>
+            </div>
+
+            {/* Score */}
+            <div className="bg-white p-6 rounded-xl shadow-md mt-6">
+              <h3 className="text-xl font-semibold text-[#0073b1] mb-6">Score: 50</h3>
+              <div className="text-gray-600 text-sm mb-4">Monthly Score Overview:</div>
+              <div className="space-y-2">
+                {monthlyScores.map((data, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <span className="text-sm text-[#0073b1]">{data.month}</span>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-16 h-2 bg-gray-300 rounded-sm">
+                        <div
+                          className={`h-full bg-[#0073b1] rounded-sm`}
+                          style={{ width: `${data.score}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-sm">{data.score}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
