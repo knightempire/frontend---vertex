@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Swal from 'sweetalert2';
 import moment from 'moment'; // Import moment.js
 import Navbar from './Navbar'; // Import Navbar component
+import { FaThumbsUp, FaShareAlt, FaBookmark } from 'react-icons/fa'; // Importing icons from react-icons
 
 const RedditFeed = () => {
   const [posts, setPosts] = useState([]); // Stores posts
@@ -93,6 +94,10 @@ const RedditFeed = () => {
     fetchPosts();
   }, [searchTerm]); // Re-fetch posts when the search term changes
 
+  // Function to handle Like, Share, Save click
+  const handlePostAction = (action, post) => {
+    console.log(`Action: ${action} | Post ID: ${post.id} `);
+  };
 
   const renderMedia = (post) => {
     if (post.is_video && post.media) {
@@ -173,6 +178,22 @@ const RedditFeed = () => {
                 <div className="flex justify-between items-center mt-4 text-sm text-gray-600">
                   <p>Score: {post.score}</p>
                   <p>Comments: {post.num_comments}</p>
+                </div>
+
+                {/* Action Icons: Like, Share, Save */}
+                <div className="flex justify-start space-x-4 mt-4">
+                  <FaThumbsUp
+                    onClick={() => handlePostAction('Like', post)}
+                    className="cursor-pointer text-[#0073b1] hover:text-[#005682]"
+                  />
+                  <FaShareAlt
+                    onClick={() => handlePostAction('Share', post)}
+                    className="cursor-pointer text-[#0073b1] hover:text-[#005682]"
+                  />
+                  <FaBookmark
+                    onClick={() => handlePostAction('Save', post)}
+                    className="cursor-pointer text-[#0073b1] hover:text-[#005682]"
+                  />
                 </div>
               </div>
             ))}
