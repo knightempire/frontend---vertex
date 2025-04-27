@@ -92,7 +92,7 @@ const SignupPage = () => {
             
             {/* Image Section */}
             <div className="flex justify-center mb-6">
-            <img src={logo} alt="Company Logo" className="h-12 cursor-pointer" />
+            <img src="https://images.ctfassets.net/tyqyfq36jzv2/4LDyHu4fEajllYmI8y5bj7/124bcfb1b6a522326d7d90ac1e3debc8/Linkedin-logo-png.png" alt="Company Logo" className="h-12 cursor-pointer" />
             </div>
     
             {/* Create Account Title */}

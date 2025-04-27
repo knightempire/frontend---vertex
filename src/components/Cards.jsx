@@ -273,7 +273,7 @@ const Dashboard = () => {
       {/* Header */}
       <header className="py-3 px-6 border-b border-gray-200 bg-white flex justify-between items-center sticky top-0 z-10">
         <div className="flex items-center">
-          <img src={logo} alt="Company Logo" className="h-10" />
+          <img src="https://images.ctfassets.net/tyqyfq36jzv2/4LDyHu4fEajllYmI8y5bj7/124bcfb1b6a522326d7d90ac1e3debc8/Linkedin-logo-png.png" alt="Company Logo" className="h-10" />
         </div>
         <div className="flex items-center">
           <div className="relative mx-4">

@@ -421,7 +421,7 @@ const Dashboard = () => {
             <div className="flex items-center space-x-8">
               <div className="flex-shrink-0 flex items-center">
                 <div className="flex items-center">
-                  <img src={logo} alt="Company Logo" className="h-8" />
+                  <img src="https://images.ctfassets.net/tyqyfq36jzv2/4LDyHu4fEajllYmI8y5bj7/124bcfb1b6a522326d7d90ac1e3debc8/Linkedin-logo-png.png" alt="Company Logo" className="h-8" />
                 </div>
               </div>
             </div>

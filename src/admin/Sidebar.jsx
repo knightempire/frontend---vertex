@@ -35,7 +35,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, logo }) => {
         <div className="flex items-center justify-between p-4 border-b">
           {sidebarOpen && (
      <div className="flex items-center" onClick={handleClick}>
-     <img src={logo} alt="Logo" className="h-8 w-30 mr-2" />
+     <img src="https://images.ctfassets.net/tyqyfq36jzv2/4LDyHu4fEajllYmI8y5bj7/124bcfb1b6a522326d7d90ac1e3debc8/Linkedin-logo-png.png" alt="Logo" className="h-8 w-30 mr-2" />
    </div>
           )}
           <button
