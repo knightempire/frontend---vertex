@@ -14,6 +14,8 @@ const CollectionPage = () => {
     '1k8lyi9',
     '1k8tysf',
     '1k8mcyg',
+    '1k8ruud',
+    '1k8s6b5',
     // Add more post IDs as needed
   ];
 
@@ -21,63 +23,145 @@ const CollectionPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const postDetails = await Promise.all(
-          postIds.map(async (postId) => {
-            const url = `https://www.reddit.com/by_id/t3_${postId}.json`;
-            console.log(`Fetching data for post ID: ${postId}`);
-            console.log(`Request URL: ${url}`);
-
-            const response = await fetch(url);
-
-            if (!response.ok) {
-              throw new Error(`Failed to fetch post data for ${postId}. Status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log('Response Data:', data);
-
-            // Extract the post data from the response
-            return data.data.children[0].data;
-          })
+  // Function to fetch the posts from Reddit API
+  const fetchPosts = async () => {
+    console.log("Fetching posts...");
+    setLoading(true);
+    
+    try {
+      // Load cached posts from localStorage
+      const cachedPosts = localStorage.getItem('collectionPosts');
+      const cachedPostsArray = cachedPosts ? JSON.parse(cachedPosts) : [];
+      
+      // Create a map of existing posts by ID for faster lookup
+      const existingPostsMap = new Map(
+        cachedPostsArray.map(post => [post.id.replace('t3_', ''), post])
+      );
+      
+      // Identify which posts are missing and need to be fetched
+      const missingPostIds = postIds.filter(postId => 
+        !existingPostsMap.has(postId)
+      );
+      
+      console.log("Missing post IDs:", missingPostIds);
+      
+      if (missingPostIds.length > 0) {
+        console.log("Fetching missing posts from API...");
+        
+        // Fetch missing posts in parallel
+        const newPostsResponses = await Promise.all(
+          missingPostIds.map(postId => 
+            fetch(`https://www.reddit.com/by_id/t3_${postId}.json`)
+              .then(response => {
+                if (!response.ok) {
+                  console.error(`Error fetching post ${postId}:`, response.status);
+                  return null;
+                }
+                return response.json();
+              })
+              .then(data => data?.data?.children[0]?.data || null)
+              .catch(error => {
+                console.error(`Error fetching post ${postId}:`, error);
+                return null;
+              })
+          )
         );
-
-        // Update the state with the fetched posts
-        setPosts(postDetails);
-      } catch (err) {
-        // Log the full error to help with debugging
-        console.error('Error during fetch operation:', err);
-
-        // Check if the error is a network error or a response error
-        if (err.name === 'TypeError' && err.message.includes('Failed to fetch')) {
-          setError('Network error or server not reachable. Please try again later.');
-        } else {
-          setError(`An error occurred: ${err.message}`);
-        }
-      } finally {
-        setLoading(false);
+        
+        // Filter out failed fetches
+        const validNewPosts = newPostsResponses.filter(post => post !== null);
+        
+        // Combine existing and new posts
+        const allPosts = [...cachedPostsArray, ...validNewPosts];
+        
+        // Update state and cache
+        setPosts(allPosts);
+        localStorage.setItem('collectionPosts', JSON.stringify(allPosts));
+        
+        console.log(`Added ${validNewPosts.length} new posts to collection`);
+      } else {
+        console.log("All posts already cached, no need to fetch");
+        setPosts(cachedPostsArray);
       }
-    };
+    } catch (err) {
+      console.error('Error during fetch operation:', err);
+      setError('There was an error fetching the posts. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  
+  
 
+  // Effect hook to fetch posts when component is mounted
+  useEffect(() => {
+    console.log("Component mounted, fetching posts...");
     fetchPosts();
-  }, [postIds]);
+  }, []);
 
   const handleRemoveFromCollection = (postId) => {
+    console.log(`Removing post with ID ${postId} from collection...`); // Debug: Removing post
     const updatedPosts = posts.filter(post => post.id !== postId);
-    setPosts(updatedPosts); // Remove the post from the state
+    setPosts(updatedPosts); // Update state to remove the post
+
+    // Update the cache after removal
+    localStorage.setItem('collectionPosts', JSON.stringify(updatedPosts));
+
+    console.log("Updated posts after removal:", updatedPosts); // Debug: Updated posts after removal
+  };
+
+  // Render Media function
+  const renderMedia = (post) => {
+    console.log(`Rendering media for post with ID: ${post.id}`);
+    console.log("Post media object:", post.media); // Debug: Check the media object structure
+
+    // If post is a video, check if media is available
+    if (post.is_video && post.media && post.media.reddit_video) {
+      const videoUrl = post.media.reddit_video.fallback_url;
+      console.log("Video URL:", videoUrl); // Debug: Check the video URL
+
+      if (videoUrl) {
+        return (
+          <div className="my-4">
+            <video controls className="w-full rounded-md shadow-md">
+              <source src={videoUrl} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        );
+      } else {
+        console.log("No video URL found for this post."); // Debug: No video URL
+      }
+    }
+
+    // If post has an image (thumbnail), render the image
+    if (post.thumbnail && post.thumbnail !== 'self' && post.thumbnail !== 'default') {
+      console.log("Rendering image thumbnail:", post.thumbnail); // Debug: Check thumbnail image
+      return (
+        <img
+          src={post.thumbnail}
+          alt="Post thumbnail"
+          className="w-full h-auto rounded-md shadow-md mb-4"
+        />
+      );
+    }
+
+    // Default if no video or image found
+    console.log("No media found for post with ID:", post.id); // Debug: No media found
+    return <div className="w-full h-48 bg-gray-300 rounded-md mb-4">No media available</div>;
   };
 
   if (loading) {
-    <div className="flex justify-center items-center mt-6">
-              <div className="animate-spin h-10 w-10 border-4 border-t-4 border-[#0073b1] border-solid rounded-full"></div>
-              <p className="ml-3 text-[#0073b1]">Loading posts...</p>
-            </div>
+    return (
+      <div className="flex justify-center items-center mt-6">
+        <div className="animate-spin h-10 w-10 border-4 border-t-4 border-[#0073b1] border-solid rounded-full"></div>
+        <p className="ml-3 text-[#0073b1]">Loading your collection...</p>
+      </div>
+    );
   }
 
   if (error) {
-   consolee.error('Error fetching posts:', error);
+    return <p className="text-center text-red-600">{error}</p>;
   }
 
   return (
@@ -90,64 +174,52 @@ const CollectionPage = () => {
 
         {posts && posts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
-              <div
-                key={post.id}
-                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-[#dfe3e8]"
-              >
-                {/* Image or Video */}
-                {post.thumbnail && post.thumbnail !== 'self' && post.thumbnail !== 'default' ? (
-                  <img
-                    src={post.thumbnail}
-                    alt="Post thumbnail"
-                    className="w-full h-48 object-cover rounded-md mb-4"
-                  />
-                ) : post.is_video && post.media ? (
-                  <div className="my-4">
-                    <video controls className="w-full rounded-md shadow-md">
-                      <source src={post.media.reddit_video.fallback_url} type="video/mp4" />
-                      Your browser does not support the video tag.
-                    </video>
+            {posts.map((post) => {
+              console.log(`Rendering post with ID: ${post.id}`); // Debug: Log each post being rendered
+              return (
+                <div
+                  key={post.id}
+                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-[#dfe3e8]"
+                >
+                  {/* Image or Video */}
+                  {renderMedia(post)}
+
+                  <h3 className="font-semibold text-xl text-gray-800 hover:text-[#0073b1] mb-3">{post.title}</h3>
+
+                  <p className="text-sm text-gray-500 mb-3">
+                    Posted by <span className="font-semibold text-[#0073b1]">{post.author}</span> in
+                    <span className="font-semibold text-[#0073b1]"> {post.subreddit}</span>
+                  </p>
+
+                  <p className="text-xs text-gray-500 mb-3">
+                    Posted on: <span className="font-semibold text-[#0073b1]">{formatDate(post.created_utc)}</span>
+                  </p>
+
+                  <a
+                    href={`https://www.reddit.com${post.permalink}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#0073b1] hover:text-[#005682] font-semibold mb-4 block"
+                  >
+                    View Post
+                  </a>
+
+                  <div className="flex justify-between items-center mt-4 text-sm text-gray-600">
+                    <p>Likes: {post.score}</p>
+                    <p>Comments: {post.num_comments}</p>
                   </div>
-                ) : (
-                  <div className="w-full h-48 bg-gray-300 rounded-md mb-4"></div> // Placeholder if no image or video
-                )}
 
-                <h3 className="font-semibold text-xl text-gray-800 hover:text-[#0073b1] mb-3">{post.title}</h3>
-
-                <p className="text-sm text-gray-500 mb-3">
-                  Posted by <span className="font-semibold text-[#0073b1]">{post.author}</span> in
-                  <span className="font-semibold text-[#0073b1]"> {post.subreddit}</span>
-                </p>
-
-                <p className="text-xs text-gray-500 mb-3">
-                  Posted on: <span className="font-semibold text-[#0073b1]">{formatDate(post.created_utc)}</span>
-                </p>
-
-                <a
-                  href={`https://www.reddit.com${post.permalink}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#0073b1] hover:text-[#005682] font-semibold mb-4 block"
-                >
-                  View Post
-                </a>
-
-                <div className="flex justify-between items-center mt-4 text-sm text-gray-600">
-                  <p>Likes: {post.score}</p>
-                  <p>Comments: {post.num_comments}</p>
+                  {/* Remove Button */}
+                  <button
+                    onClick={() => handleRemoveFromCollection(post.id)}
+                    className="mt-4 text-red-600 hover:text-red-800 flex items-center space-x-2"
+                  >
+                    <FaTrashAlt />
+                    <span>Remove from Collection</span>
+                  </button>
                 </div>
-
-                {/* Remove Button */}
-                <button
-                  onClick={() => handleRemoveFromCollection(post.id)}
-                  className="mt-4 text-red-600 hover:text-red-800 flex items-center space-x-2"
-                >
-                  <FaTrashAlt />
-                  <span>Remove from Collection</span>
-                </button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <p className="text-center text-gray-500">No posts in your collection yet.</p>

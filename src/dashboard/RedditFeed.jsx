@@ -35,10 +35,27 @@ const RedditFeed = () => {
   // Fetch posts from Reddit based on the search term
   const fetchPosts = async (manualLoad = false) => {
     if (loading) return; // Prevent multiple concurrent fetches
-
+  
     setLoading(true);
-
-    // Modify URL based on the search term
+  
+    const cacheKey = `posts_${searchTerm || 'all'}_${after || ''}`;
+    const cacheData = localStorage.getItem(cacheKey);
+  
+    // Check if cached data exists and is not expired
+    if (cacheData) {
+      const parsedData = JSON.parse(cacheData);
+      const currentTime = new Date().getTime();
+      
+      // If the data is older than 1 hour, consider it expired
+      if (currentTime - parsedData.timestamp < 3600000) {
+        setPosts(parsedData.posts);
+        setAfter(parsedData.after);
+        setLoading(false);
+        return;
+      }
+    }
+  
+    // If no valid cache, fetch new data
     const url = after
       ? searchTerm
         ? `https://www.reddit.com/r/all/search.json?q=${searchTerm}&after=${after}&sort=top`
@@ -46,11 +63,11 @@ const RedditFeed = () => {
       : searchTerm
       ? `https://www.reddit.com/r/all/search.json?q=${searchTerm}&sort=top`
       : 'https://www.reddit.com/r/all/top.json';
-
+  
     try {
       const response = await fetch(url);
       const data = await response.json();
-
+  
       if (response.ok) {
         const newPosts = data.data.children.map((post) => ({
           id: post.data.id,
@@ -66,17 +83,23 @@ const RedditFeed = () => {
           link_flair_text: post.data.link_flair_text,
           created_utc: post.data.created_utc,
         }));
-
+  
         // Filter out duplicates based on post.id
         const filteredPosts = [
           ...posts,
           ...newPosts.filter((newPost) => !posts.some((post) => post.id === newPost.id)),
         ];
-
+  
         setPosts(filteredPosts);
-
-        // Update the 'after' value for the next batch of posts
         setAfter(data.data.after);
+  
+        // Cache the data in localStorage
+        const cacheData = {
+          posts: filteredPosts,
+          after: data.data.after,
+          timestamp: new Date().getTime(),
+        };
+        localStorage.setItem(cacheKey, JSON.stringify(cacheData));
       } else {
         Swal.fire({
           title: 'Error',
@@ -99,13 +122,29 @@ const RedditFeed = () => {
       }
     }
   };
-
+  
   // Fetch the top trending posts from Reddit
   const fetchTrendingPosts = async () => {
+    const cacheKey = 'trending_posts';
+    const cacheData = localStorage.getItem(cacheKey);
+  
+    // Check if cached data exists and is not expired
+    if (cacheData) {
+      const parsedData = JSON.parse(cacheData);
+      const currentTime = new Date().getTime();
+      
+      // If the data is older than 1 hour, consider it expired
+      if (currentTime - parsedData.timestamp < 3600000) {
+        setTrendingPosts(parsedData.trendingPosts);
+        return;
+      }
+    }
+  
+    // If no valid cache, fetch new data
     try {
       const response = await fetch('https://www.reddit.com/r/all/top.json?limit=5'); // Limit to 5 trending posts
       const data = await response.json();
-
+  
       if (response.ok) {
         const trendingPostsData = data.data.children.map((post) => ({
           title: post.data.title,
@@ -115,15 +154,22 @@ const RedditFeed = () => {
           subreddit: post.data.subreddit,
           num_comments: post.data.num_comments,
         }));
-
+  
         trendingPostsData.sort((a, b) => {
           if (b.score === a.score) {
             return b.num_comments - a.num_comments;
           }
           return b.score - a.score;
         });
-
+  
         setTrendingPosts(trendingPostsData);
+  
+        // Cache the data in localStorage
+        const cacheData = {
+          trendingPosts: trendingPostsData,
+          timestamp: new Date().getTime(),
+        };
+        localStorage.setItem(cacheKey, JSON.stringify(cacheData));
       } else {
         Swal.fire({
           title: 'Error',
@@ -142,6 +188,7 @@ const RedditFeed = () => {
       });
     }
   };
+  
 
   useEffect(() => {
     fetchPosts();
