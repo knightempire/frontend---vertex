@@ -23,7 +23,7 @@ const CollectionPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Function to fetch the posts from Reddit API
+
   const fetchPosts = async () => {
     console.log("Fetching posts...");
     setLoading(true);
@@ -33,12 +33,12 @@ const CollectionPage = () => {
       const cachedPosts = localStorage.getItem('collectionPosts');
       const cachedPostsArray = cachedPosts ? JSON.parse(cachedPosts) : [];
       
-      // Create a map of existing posts by ID for faster lookup
+
       const existingPostsMap = new Map(
         cachedPostsArray.map(post => [post.id.replace('t3_', ''), post])
       );
       
-      // Identify which posts are missing and need to be fetched
+
       const missingPostIds = postIds.filter(postId => 
         !existingPostsMap.has(postId)
       );
@@ -67,13 +67,13 @@ const CollectionPage = () => {
           )
         );
         
-        // Filter out failed fetches
+
         const validNewPosts = newPostsResponses.filter(post => post !== null);
         
-        // Combine existing and new posts
+
         const allPosts = [...cachedPostsArray, ...validNewPosts];
         
-        // Update state and cache
+
         setPosts(allPosts);
         localStorage.setItem('collectionPosts', JSON.stringify(allPosts));
         
@@ -93,7 +93,6 @@ const CollectionPage = () => {
   
   
 
-  // Effect hook to fetch posts when component is mounted
   useEffect(() => {
     console.log("Component mounted, fetching posts...");
     fetchPosts();
@@ -113,12 +112,12 @@ const CollectionPage = () => {
   // Render Media function
   const renderMedia = (post) => {
     console.log(`Rendering media for post with ID: ${post.id}`);
-    console.log("Post media object:", post.media); // Debug: Check the media object structure
+    console.log("Post media object:", post.media); 
 
-    // If post is a video, check if media is available
+
     if (post.is_video && post.media && post.media.reddit_video) {
       const videoUrl = post.media.reddit_video.fallback_url;
-      console.log("Video URL:", videoUrl); // Debug: Check the video URL
+      console.log("Video URL:", videoUrl); 
 
       if (videoUrl) {
         return (
@@ -130,13 +129,13 @@ const CollectionPage = () => {
           </div>
         );
       } else {
-        console.log("No video URL found for this post."); // Debug: No video URL
+        console.log("No video URL found for this post."); L
       }
     }
 
     // If post has an image (thumbnail), render the image
     if (post.thumbnail && post.thumbnail !== 'self' && post.thumbnail !== 'default') {
-      console.log("Rendering image thumbnail:", post.thumbnail); // Debug: Check thumbnail image
+      console.log("Rendering image thumbnail:", post.thumbnail); 
       return (
         <img
           src={post.thumbnail}
@@ -147,7 +146,7 @@ const CollectionPage = () => {
     }
 
     // Default if no video or image found
-    console.log("No media found for post with ID:", post.id); // Debug: No media found
+    console.log("No media found for post with ID:", post.id); 
     return <div className="w-full h-48 bg-gray-300 rounded-md mb-4">No media available</div>;
   };
 
@@ -175,7 +174,7 @@ const CollectionPage = () => {
         {posts && posts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => {
-              console.log(`Rendering post with ID: ${post.id}`); // Debug: Log each post being rendered
+              console.log(`Rendering post with ID: ${post.id}`); 
               return (
                 <div
                   key={post.id}
