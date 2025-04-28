@@ -1,9 +1,9 @@
 import React from 'react';
-import Navbar from './Navbar'; // Assuming you have a Navbar component
-import { FaUserPlus } from 'react-icons/fa'; // LinkedIn-like "Connect" icon
+import Navbar from './Navbar'; 
+import { FaUserPlus } from 'react-icons/fa'; 
 
 const ConnectionsPage = () => {
-  // Mock connection data as const within the component (10 users)
+
   const connectionsData = [
     {
       id: 1,
@@ -96,7 +96,7 @@ const ConnectionsPage = () => {
               <p className="text-gray-600">{user.jobTitle}</p>
               <p className="text-gray-500 text-sm">{user.location}</p>
               
-              {/* Connect button styled like LinkedIn */}
+
               <button className="mt-4 flex items-center space-x-2 py-2 px-4 rounded-full text-sm font-semibold border border-[#0073b1] text-[#0073b1] hover:bg-[#0073b1] hover:text-white transition duration-300">
                 <FaUserPlus size={18} />
                 <span>Connect</span>
