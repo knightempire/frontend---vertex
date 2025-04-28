@@ -33,7 +33,7 @@ const ChatBot = () => {
     },
     {
       id: 3,
-      name: 'Makar AI',
+      name: 'Dev',
       profilePic: 'https://via.placeholder.com/50?text=AI',
       lastMessage: 'Hello! How can I assist you today?',
       unreadCount: 0,
