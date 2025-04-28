@@ -5,6 +5,8 @@ import Navbar from './Navbar';
 import { FaThumbsUp, FaShareAlt, FaBookmark } from 'react-icons/fa';
 import { FaUserPlus } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { FaFlag } from 'react-icons/fa';
+
 
 const RedditFeed = () => {
   const navigate = useNavigate();
@@ -123,6 +125,7 @@ const RedditFeed = () => {
     }
   };
   
+
   // Fetch the top trending posts from Reddit
   const fetchTrendingPosts = async () => {
     const cacheKey = 'trending_posts';
@@ -186,6 +189,36 @@ const RedditFeed = () => {
         icon: 'error',
         confirmButtonColor: primaryColor,
       });
+    }
+  };
+  
+
+  const handleReport = async (post) => {
+    const { value: reason } = await Swal.fire({
+      title: 'Report Post',
+      input: 'select',
+      inputOptions: {
+        spam: 'Spam',
+        harassment: 'Harassment',
+        misinformation: 'Misinformation',
+        other: 'Other',
+      },
+      inputPlaceholder: 'Select a reason',
+      showCancelButton: true,
+      confirmButtonColor: primaryColor,
+      cancelButtonColor: lightGray,
+    });
+  
+    if (reason) {
+      Swal.fire({
+        title: 'Reported!',
+        text: `You reported this post for: ${reason}`,
+        icon: 'success',
+        confirmButtonColor: primaryColor,
+      });
+  
+      // You can also send this report to a backend API if needed
+      console.log(`Post ID ${post.id} reported for: ${reason}`);
     }
   };
   
@@ -292,6 +325,11 @@ const RedditFeed = () => {
                     onClick={() => handlePostAction('Save', post)}
                     className="cursor-pointer text-[#0073b1] hover:text-[#005682]"
                   />
+                  <FaFlag
+  onClick={() => handleReport(post)}
+  className="cursor-pointer text-[#0073b1] hover:text-[#005682]"
+/>
+
                 </div>
               </div>
             ))}
