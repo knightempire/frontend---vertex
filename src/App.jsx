@@ -25,6 +25,8 @@ import CrossClimb from './game/CrossClimb';
 import Queens from './game/Queens';
 import Inference from './game/Inference';
 
+
+import useActiveTime from './useActiveTime';
 const App = () => {
   return (
     <Router>
@@ -38,9 +40,17 @@ const AppRoutes = () => {
   
   // Check if the current path is an admin route
   const isAdminRoute = location.pathname.startsWith('/admin');
-  
+  const userId = '123';
+
+  // Only track for non-admin routes and if user is logged in
+  if (!isAdminRoute && userId) {
+    useActiveTime(userId);
+  }
+
+
   return (
     <>
+    
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />

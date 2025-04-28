@@ -266,7 +266,7 @@ const RedditFeed = () => {
       <div className="w-full sm:w-1/4 p-6 bg-[#f5f5f7] top-0 z-10   hidden sm:block" >
   <div className="bg-white p-4 rounded-xl shadow-md">
     <img src="https://via.placeholder.com/150" alt="Profile" className="w-32 h-32 rounded-full mx-auto mb-4" />
-    <h2 className="text-center text-xl font-semibold text-[#0073b1]">John Doe</h2>
+    <h2 className="text-center text-xl font-semibold text-[#0073b1]"      onClick={() => navigate('/profile')}>John Doe</h2>
     <p className="text-center text-gray-600">Software Engineer</p>
     <p className="mt-4 text-center text-sm text-gray-500">A passionate developer who loves coding and technology.</p>
 

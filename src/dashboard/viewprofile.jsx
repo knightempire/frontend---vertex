@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { FaArrowLeft, FaArrowRight, FaEdit } from 'react-icons/fa';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
+// Register ChartJS components
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const ViewProfile = () => {
   // Mock profile data as const within the component
@@ -51,8 +55,48 @@ const ViewProfile = () => {
   };
 
   const [currentDate, setCurrentDate] = useState(new Date());
+  const weeklyDataInSeconds = [500, 300, 1000, 1500, 1200, 1800, 2000]; // Times in seconds (for Monday to Sunday)
+  
+    const weeklyDataInMinutes = weeklyDataInSeconds.map((time) => Math.floor(time / 60));
+    const averageTimeSpent = Math.floor(weeklyDataInMinutes.reduce((a, b) => a + b, 0) / weeklyDataInMinutes.length);
 
-    const navigate = useNavigate();
+
+    // Chart.js configuration for the bar chart
+    const data = {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      datasets: [
+        {
+          label: 'Time Spent (minutes)',
+          data: weeklyDataInMinutes,
+          backgroundColor: 'skyblue',
+          borderRadius: 5,
+          borderWidth: 1,
+        },
+      ],
+    };
+  
+    const options = {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            stepSize: 1,
+          },
+        },
+      },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function (tooltipItem) {
+              return tooltipItem.raw + ' mins'; // Show in minutes
+            },
+          },
+        },
+      },
+    };
+
+
 
   const getMonthName = (date) => {
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -272,6 +316,14 @@ const ViewProfile = () => {
                 ))}
               </div>
             </div>
+
+            <div className="bg-white p-6 rounded-xl shadow-md mt-6">
+              <h3 className="text-xl font-semibold text-[#0073b1] mb-6">Weekly Time Spent</h3>
+              <p className="text-sm text-gray-600 mb-4">Average Time Spent: <span className="font-semibold text-[#0073b1]">{averageTimeSpent} mins</span></p>
+              <Bar data={data} options={options} />
+            </div>
+
+
           </div>
         </div>
       </div>
