@@ -35,7 +35,7 @@ const CrossClimb = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-100 to-blue-300 flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Nav />
       <div className="flex-1 flex flex-col items-center justify-center p-6">
         <h1 className="text-4xl font-bold mb-8 text-[#023e8a]">Cross Climb</h1>

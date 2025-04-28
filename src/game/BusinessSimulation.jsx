@@ -58,7 +58,7 @@ const Bingo = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Nav />
       <div className="flex-1 flex flex-col items-center justify-center p-6">
         <h1 className="text-4xl font-bold mb-8 text-[#003566]">Bingo Challenge</h1>

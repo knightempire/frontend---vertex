@@ -132,7 +132,7 @@ const WordSearchGame = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200 flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Nav />
       <div className="flex-1 flex flex-col items-center justify-center p-6">
         <h1 className="text-5xl font-extrabold text-indigo-700 mb-8">📝 Word Search</h1>

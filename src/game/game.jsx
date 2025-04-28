@@ -13,7 +13,7 @@ const Game = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-blue-300">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Nav />
       <div className="max-w-4xl mx-auto p-8 text-center">
         <h1 className="text-4xl font-bold text-[#0073b1] mb-10">Choose Your Game</h1>
