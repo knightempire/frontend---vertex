@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AlertCircle, CheckCircle, Clock, Award, Mountain } from 'lucide-react';
+import Nav from './nav'; // Your navbar
 
 const CrossClimb = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -175,6 +176,7 @@ const CrossClimb = () => {
     const currentChallenge = climbChallenges[currentQuestion];
     
     return (
+
       <div className="mb-6">
         <svg viewBox="0 0 200 120" className="mx-auto w-full max-w-md">
           {/* Base mountain */}
@@ -262,6 +264,7 @@ const CrossClimb = () => {
           />
         </svg>
       </div>
+
     );
   };
 
@@ -336,6 +339,7 @@ const CrossClimb = () => {
   };
 
   const renderIntro = () => (
+    
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -383,6 +387,7 @@ const CrossClimb = () => {
     const progressPercent = (selectedPath.length / currentChallenge.correctPath.length) * 100;
     
     return (
+
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -422,6 +427,7 @@ const CrossClimb = () => {
         {renderGrid()}
         {renderFeedback()}
       </motion.div>
+
     );
   };
 
@@ -475,12 +481,15 @@ const CrossClimb = () => {
   );
 
   return (
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 flex flex-col">
+      <Nav />
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-300 py-8 px-4">
       <div className="container mx-auto">
         {gameState === 'intro' && renderIntro()}
         {gameState === 'playing' && renderPlaying()}
         {gameState === 'result' && renderResult()}
       </div>
+    </div>
     </div>
   );
 };

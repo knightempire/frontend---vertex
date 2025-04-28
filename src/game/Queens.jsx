@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Award, AlertCircle, CheckCircle } from 'lucide-react';
+import Nav from './nav'; // Your navbar
 
 const QueensChallenge = () => {
   const [currentChallenge, setCurrentChallenge] = useState(0);
@@ -443,7 +444,9 @@ const QueensChallenge = () => {
     const currentQ = challenges[currentChallenge];
     
     return (
+      
       <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl mx-auto">
+
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
           <div className="text-sm font-medium text-gray-500">
             Challenge {currentChallenge + 1} of {challenges.length}
@@ -503,6 +506,8 @@ const QueensChallenge = () => {
   };
 
   const renderResult = () => (
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 flex flex-col">
+      <Nav />
     <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 md:p-8 max-w-sm sm:max-w-md md:max-w-lg mx-auto text-center">
       <div className="mb-6">
         <Award className="w-12 h-12 sm:w-16 sm:h-16 text-yellow-500 mx-auto" />
@@ -543,14 +548,18 @@ const QueensChallenge = () => {
         Play Again
       </button>
     </div>
+    </div>
   );
 
   return (
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 flex flex-col">
+      <Nav />
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-blue-300 py-4 sm:py-8 px-2 sm:px-4">
       <div className="container mx-auto">
         {gameState === 'intro' && renderIntro()}
         {gameState === 'playing' && renderPlaying()}
         {gameState === 'result' && renderResult()}
+      </div>
       </div>
     </div>
   );

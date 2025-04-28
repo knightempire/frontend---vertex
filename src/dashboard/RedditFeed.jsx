@@ -262,17 +262,68 @@ const RedditFeed = () => {
       <Navbar onSearch={(term) => setSearchTerm(term)} />
 
       <div className="flex flex-col sm:flex-row">
-        <div className="w-full sm:w-1/4 p-6 bg-[#f5f5f7] top-0 z-10">
-          <div className="bg-white p-4 rounded-xl shadow-md">
-            <img src="https://via.placeholder.com/150" alt="Profile" className="w-32 h-32 rounded-full mx-auto mb-4" />
-            <h2 className="text-center text-xl font-semibold text-[#0073b1]">John Doe</h2>
-            <p className="text-center text-gray-600">Software Engineer</p>
-            <p className="mt-4 text-center text-sm text-gray-500">A passionate developer who loves coding and technology.</p>
-            <div className="mt-4 text-center">
-              <button className="px-6 py-2 text-sm bg-[#0073b1] text-white rounded-full hover:bg-[#005682]">Connect</button>
-            </div>
+        
+      <div className="w-full sm:w-1/4 p-6 bg-[#f5f5f7] top-0 z-10   hidden sm:block" >
+  <div className="bg-white p-4 rounded-xl shadow-md">
+    <img src="https://via.placeholder.com/150" alt="Profile" className="w-32 h-32 rounded-full mx-auto mb-4" />
+    <h2 className="text-center text-xl font-semibold text-[#0073b1]">John Doe</h2>
+    <p className="text-center text-gray-600">Software Engineer</p>
+    <p className="mt-4 text-center text-sm text-gray-500">A passionate developer who loves coding and technology.</p>
+
+    {/* Score and Streak Section */}
+    <div className="mt-4 text-center">
+      <p className="text-lg font-medium text-gray-700">Score: <span className="text-[#0073b1]">120</span></p>
+      <p className="text-lg font-medium text-gray-700">Streak: <span className="text-[#0073b1]">5 days</span></p>
+    </div>
+  </div>
+  
+  <div className="bg-white p-4 rounded-xl mt-4 shadow-md">
+      {/* Play Game Section */}
+      <div className="mt-6">
+        <h3 className="text-center text-md font-semibold text-gray-800 mb-4">🎮 Play Game</h3>
+
+        {/* Individual Game Cards */}
+        <div className="space-y-4">
+          {/* QueensChallenge */}
+          <div
+            onClick={() => navigate('/game/queens')}
+            className="flex items-center p-4 bg-[#e6f0f8] rounded-lg shadow-sm hover:bg-[#d4e7f4] cursor-pointer"
+          >
+            <span className="text-3xl mr-4">👑</span>
+            <p className="text-md font-medium text-[#0073b1]">QueensChallenge</p>
+          </div>
+
+          {/* BingoQuiz */}
+          <div
+            onClick={() => navigate('/game/inference')}
+            className="flex items-center p-4 bg-[#e6f0f8] rounded-lg shadow-sm hover:bg-[#d4e7f4] cursor-pointer"
+          >
+            <span className="text-3xl mr-4">🎯</span>
+            <p className="text-md font-medium text-[#0073b1]">BingoQuiz</p>
+          </div>
+
+          {/* CrossClimb */}
+          <div
+            onClick={() => navigate('/game/crossclimb')}
+            className="flex items-center p-4 bg-[#e6f0f8] rounded-lg shadow-sm hover:bg-[#d4e7f4] cursor-pointer"
+          >
+            <span className="text-3xl mr-4">🧗‍♀️</span>
+            <p className="text-md font-medium text-[#0073b1]">CrossClimb</p>
+          </div>
+
+          {/* TimedBingoGame */}
+          <div
+            onClick={() => navigate('/game/business-simulation')}
+            className="flex items-center p-4 bg-[#e6f0f8] rounded-lg shadow-sm hover:bg-[#d4e7f4] cursor-pointer"
+          >
+            <span className="text-3xl mr-4">⏱️</span>
+            <p className="text-md font-medium text-[#0073b1]">TimedBingoGame</p>
           </div>
         </div>
+      </div>
+    </div>
+</div>
+
 
 
         <div className="w-full sm:w-2/4 p-6 overflow-y-auto">
