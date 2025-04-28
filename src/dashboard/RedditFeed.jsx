@@ -164,7 +164,7 @@ const RedditFeed = () => {
   
         setTrendingPosts(trendingPostsData);
   
-        // Cache the data in localStorage
+
         const cacheData = {
           trendingPosts: trendingPostsData,
           timestamp: new Date().getTime(),
@@ -241,7 +241,7 @@ const RedditFeed = () => {
           </div>
         </div>
 
-        {/* Middle Section: Posts (scrollable) */}
+
         <div className="w-full sm:w-2/4 p-6 overflow-y-auto">
           <div className="space-y-6 mt-6">
             {posts.map((post, index) => (
@@ -316,7 +316,7 @@ const RedditFeed = () => {
           )}
         </div>
 
-        {/* Right Sidebar: Scorable content (scrollable) */}
+
         <div className="w-full sm:w-1/4 p-6 bg-[#f5f5f7] hidden sm:block">
           <div className="bg-white p-4 rounded-xl shadow-md mb-6">
             <h3 className="text-xl font-semibold text-[#0073b1] mb-4">Trending</h3>
@@ -331,12 +331,11 @@ const RedditFeed = () => {
             </ul>
           </div>
 
-          {/* People You Might Know */}
 
 <div className="bg-white p-4 rounded-xl shadow-md relative">
   <h3 className="text-xl font-semibold text-[#0073b1] mb-4">People You Might Know</h3>
   
-  {/* View More button positioned in the top-right */}
+
   <button className="absolute top-4 right-4 text-sm text-[#0073b1] hover:text-[#005682]"
     onClick={() => navigate('/connections')}>
     View More
