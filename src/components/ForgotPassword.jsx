@@ -23,8 +23,8 @@ const ForgotPassword = () => {
             return;
         }
 
-        const username = email;
-        const requestData = { username };
+        const email = email;
+        const requestData = { email };
 
         try {
             // Make the API call to request a password reset link

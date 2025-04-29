@@ -90,7 +90,7 @@ const Login = () => {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: email, password }),
+        body: JSON.stringify({ email: email, password }),
       });
       const data = await res.json();
 
@@ -125,7 +125,7 @@ const Login = () => {
           className="flex justify-center mb-6 cursor-pointer"
           onClick={() => navigate('/feed')}
         >
-          <img src={logo} alt="Company Logo" className="h-12" />
+          <img src="https://images.ctfassets.net/tyqyfq36jzv2/4LDyHu4fEajllYmI8y5bj7/124bcfb1b6a522326d7d90ac1e3debc8/Linkedin-logo-png.png" alt="Company Logo" className="h-12" />
         </div>
 
         <h2

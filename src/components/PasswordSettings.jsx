@@ -9,9 +9,9 @@ const PasswordSettings = () => {
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [userName, setUserName] = useState('');
-  const [userId, setUserId] = useState('');
-  const [userIdValid, setUserIdValid] = useState(false); // New state to track the user ID validity
-  const [userIdMessage, setUserIdMessage] = useState(''); // New state for the message
+  const [Username, setUserId] = useState('');
+  const [UsernameValid, setUserIdValid] = useState(false);
+  const [UsernameMessage, setUserIdMessage] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -41,8 +41,9 @@ const PasswordSettings = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Form submitted' ,Username);
 
-    if (validatePasswords() && userIdValid) { // Check if userId is valid before submission
+    if (validatePasswords() && UsernameValid) {
       setLoading(true);
 
       const hashParams = new URLSearchParams(location.hash.replace('#', '?'));
@@ -50,12 +51,15 @@ const PasswordSettings = () => {
       const token = new URLSearchParams(location.search).get('token');
 
       let endpoint = '';
-      let body = { password: newPassword };
+      let body 
+      console.log("body",body);
       if (type === 'register') {
-        endpoint = `${import.meta.env.VITE_API_URL}/users/password`;
-        body = { userId, password: newPassword };
+        endpoint = `${import.meta.env.VITE_API_URL}/user/password`;
+        body = { username: Username, password: newPassword };
+
       } else if (type === 'forgot') {
-        endpoint = `${import.meta.env.VITE_API_URL}/users/resetpassword`;
+        endpoint = `${import.meta.env.VITE_API_URL}/user/resetpassword`;
+          body =  { password: newPassword };
       }
 
       try {
@@ -69,7 +73,7 @@ const PasswordSettings = () => {
         });
 
         const data = await response.json();
-
+        console.log('Response data:', data);
         if (response.ok) {
           Swal.fire({
             title: 'Success!',
@@ -80,7 +84,8 @@ const PasswordSettings = () => {
             confirmButtonText: 'Continue',
           }).then((result) => {
             if (result.isConfirmed) {
-             
+              navigate('/login');
+              // Navigate or handle the success action here
             }
           });
         } else {
@@ -93,7 +98,8 @@ const PasswordSettings = () => {
             confirmButtonText: 'Retry',
           }).then((result) => {
             if (result.isConfirmed) {
-             
+              // Handle retry action
+              navigate('/login');
             }
           });
         }
@@ -109,14 +115,14 @@ const PasswordSettings = () => {
           confirmButtonText: 'Retry',
         }).then((result) => {
           if (result.isConfirmed) {
-           
+            // Handle retry action
           }
         });
       }
     } else {
       Swal.fire({
         title: 'Error',
-        text: 'Please make sure your user ID is valid and your passwords match.',
+        text: 'Please make sure your Username is valid and your passwords match.',
         icon: 'error',
         confirmButtonColor: primaryColor,
         allowOutsideClick: false,
@@ -126,41 +132,41 @@ const PasswordSettings = () => {
   };
 
   const handleUserIdBlur = async () => {
-    console.log('User ID field lost focus');
+    console.log('Username field lost focus');
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/user/check/main_username`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/user/check/username`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({  username : userId }),
+        body: JSON.stringify({ username: Username }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setUserIdValid(true); // Mark the user ID as valid
-        setUserIdMessage('User ID is available!'); // Success message
-        console.log('User ID check success:', data);
+        setUserIdValid(true); // Mark the Username as valid
+        setUserIdMessage('Username is available!'); // Success message
+        console.log('Username check success:', data);
       } else {
-        setUserIdValid(false); // Mark the user ID as invalid
-        setUserIdMessage('User ID is already taken or invalid.'); // Error message
-        console.error('User ID check failed:', data);
+        setUserIdValid(false); // Mark the Username as invalid
+        setUserIdMessage('Username is already taken or invalid.'); // Error message
+        console.error('Username check failed:', data);
         Swal.fire({
           title: 'Error',
-          text: 'User ID is already taken or invalid.',
+          text: 'Username is already taken or invalid.',
           icon: 'error',
           confirmButtonColor: primaryColor,
         });
       }
     } catch (error) {
-      setUserIdValid(false); // Mark the user ID as invalid in case of an error
-      setUserIdMessage('An error occurred while checking the User ID.'); // Error message
-      console.error('Error while checking user ID:', error);
+      setUserIdValid(false); // Mark the Username as invalid in case of an error
+      setUserIdMessage('An error occurred while checking the Username.'); // Error message
+      console.error('Error while checking Username:', error);
       Swal.fire({
         title: 'Error',
-        text: 'An error occurred while checking the User ID.',
+        text: 'An error occurred while checking the Username.',
         icon: 'error',
         confirmButtonColor: primaryColor,
       });
@@ -173,7 +179,6 @@ const PasswordSettings = () => {
     const token = new URLSearchParams(location.search).get('token');
 
     if ((!type || (type !== 'register' && type !== 'forgot')) || !token) {
-     
       Swal.fire({
         title: 'Error',
         text: 'Invalid URL or link. Please try again.',
@@ -182,15 +187,15 @@ const PasswordSettings = () => {
         allowOutsideClick: false,
         confirmButtonText: 'Retry',
       }).then(() => {
-       
+        // Navigate or handle error
       });
     } else {
       const verifyToken = async () => {
         try {
           const endpoint = type === 'register'
-            ? `${import.meta.env.VITE_API_URL}/users/verify-token-register`
-            : `${import.meta.env.VITE_API_URL}/users/verify-token-forgot`;
-
+            ? `${import.meta.env.VITE_API_URL}/user/verify-token-register`
+            : `${import.meta.env.VITE_API_URL}/user/verify-token-forgot`;
+      
           const response = await fetch(endpoint, {
             method: 'GET',
             headers: {
@@ -198,9 +203,8 @@ const PasswordSettings = () => {
               'Content-Type': 'application/json',
             },
           });
-
+      
           const data = await response.json();
-
           if (!response.ok) {
             Swal.fire({
               title: 'Error',
@@ -208,16 +212,13 @@ const PasswordSettings = () => {
               icon: 'error',
               confirmButtonColor: primaryColor,
               confirmButtonText: 'Retry',
-              allowOutsideClick: false,
-            }).then((result) => {
-              if (result.isConfirmed) {
-               
-              }
+            }).then(() => {
+              navigate('/login');  // Redirect to /login if response is not OK
             });
           } else {
             setUserName(data.user.name);
           }
-
+      
         } catch (error) {
           console.error('Error verifying token:', error);
           Swal.fire({
@@ -228,10 +229,11 @@ const PasswordSettings = () => {
             allowOutsideClick: false,
             confirmButtonText: 'Retry',
           }).then(() => {
-           
+            navigate('/login');  // Redirect to /login in case of error
           });
         }
       };
+      
 
       verifyToken();
     }
@@ -253,20 +255,20 @@ const PasswordSettings = () => {
           {location.hash.includes('type=register') && (
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2" style={{ color: darkColor }}>
-                User ID
+                Username
               </label>
               <input
                 type="text"
-                value={userId}
+                value={Username}
                 onChange={(e) => setUserId(e.target.value)}
-                onBlur={handleUserIdBlur} // Add the onBlur event handler here
+                onBlur={handleUserIdBlur}
                 className={`w-full px-3 py-2 border rounded-md`}
                 style={{ borderColor: `${darkColor}20` }}
-                placeholder="Enter your user ID"
+                placeholder="Enter your Username"
               />
-              {userIdMessage && (
-                <p className={`text-sm mt-2 ${userIdValid ? 'text-green-500' : 'text-red-500'}`}>
-                  {userIdMessage}
+              {UsernameMessage && (
+                <p className={`text-sm mt-2 ${UsernameValid ? 'text-green-500' : 'text-red-500'}`}>
+                  {UsernameMessage}
                 </p>
               )}
             </div>
@@ -308,7 +310,7 @@ const PasswordSettings = () => {
 
           <button
             type="submit"
-            disabled={loading || !userIdValid} // Disable the button if the user ID is not valid
+            disabled={loading || !UsernameValid} // Disable button if password or username is invalid
             className="w-full font-medium py-2 rounded-md text-white relative overflow-hidden group"
             style={{ background: gradientButton }}
           >
@@ -325,3 +327,5 @@ const PasswordSettings = () => {
 };
 
 export default PasswordSettings;
+
+
