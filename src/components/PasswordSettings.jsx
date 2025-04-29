@@ -41,14 +41,17 @@ const PasswordSettings = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted' ,Username);
+    console.log('Form submitted');
 
-    if (validatePasswords() && UsernameValid) {
+    const hashParams = new URLSearchParams(location.hash.replace('#', '?'));
+    const type = hashParams.get('type');
+    const token = new URLSearchParams(location.search).get('token');
+
+    if (validatePasswords() && (type !== 'register' || UsernameValid)) {
+
       setLoading(true);
 
-      const hashParams = new URLSearchParams(location.hash.replace('#', '?'));
-      const type = hashParams.get('type');
-      const token = new URLSearchParams(location.search).get('token');
+   
 
       let endpoint = '';
       let body 
@@ -60,6 +63,7 @@ const PasswordSettings = () => {
       } else if (type === 'forgot') {
         endpoint = `${import.meta.env.VITE_API_URL}/user/resetpassword`;
           body =  { password: newPassword };
+          console.log("body",body);
       }
 
       try {
@@ -84,8 +88,8 @@ const PasswordSettings = () => {
             confirmButtonText: 'Continue',
           }).then((result) => {
             if (result.isConfirmed) {
-              navigate('/login');
               // Navigate or handle the success action here
+              navigate('/login');
             }
           });
         } else {
@@ -116,6 +120,7 @@ const PasswordSettings = () => {
         }).then((result) => {
           if (result.isConfirmed) {
             // Handle retry action
+            navigate('/login');
           }
         });
       }
@@ -188,6 +193,7 @@ const PasswordSettings = () => {
         confirmButtonText: 'Retry',
       }).then(() => {
         // Navigate or handle error
+        navigate('/login');
       });
     } else {
       const verifyToken = async () => {
@@ -205,6 +211,7 @@ const PasswordSettings = () => {
           });
       
           const data = await response.json();
+          console.log('Token verification response:', data);
           if (!response.ok) {
             Swal.fire({
               title: 'Error',
@@ -310,7 +317,7 @@ const PasswordSettings = () => {
 
           <button
             type="submit"
-            disabled={loading || !UsernameValid} // Disable button if password or username is invalid
+            disabled={loading || (location.hash.includes('type=register') && !UsernameValid)}
             className="w-full font-medium py-2 rounded-md text-white relative overflow-hidden group"
             style={{ background: gradientButton }}
           >

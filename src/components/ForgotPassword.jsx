@@ -15,60 +15,58 @@ const ForgotPassword = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setEmailError('');  // Reset the error
-
-        // Check if the email is valid
+        setEmailError('');
+    
         if (!email || !validateEmail(email)) {
             setEmailError('Please enter a valid email address.');
             return;
         }
-
-        const email = email;
+    
         const requestData = { email };
-
+    
         try {
-            // Make the API call to request a password reset link
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/users/forgotpassword`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/user/forgotpassword`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(requestData),
             });
-
+    
             const data = await response.json();
-
+    
             if (!response.ok) {
-                // Handle error response (e.g., invalid email)
                 Swal.fire({
                     title: 'Error!',
                     text: data.message || 'Something went wrong. Please try again later.',
                     icon: 'error',
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'OK',
                 });
                 return;
             }
-
-            // If successful, show success message
+    
             Swal.fire({
                 title: 'Reset Link Sent!',
                 text: 'A reset link has been sent to your email.',
                 icon: 'success',
-                confirmButtonText: 'OK'
+                confirmButtonText: 'OK',
             }).then(() => {
-                navigate('/login'); // Redirect to login after confirmation
+                navigate('/login');
             });
-
+    
         } catch (error) {
             console.error('Error during password reset:', error);
             Swal.fire({
                 title: 'Error!',
                 text: 'An error occurred while processing your request. Please try again later.',
                 icon: 'error',
-                confirmButtonText: 'OK'
+                confirmButtonText: 'OK',
+            }).then(() => {
+                navigate('/login'); // Navigate even on error
             });
         }
     };
+    
 
     return (
         <div className="h-screen w-full flex items-center justify-center" style={{ background: "#f5f5f7" }}>
