@@ -4,6 +4,7 @@ import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { time } from 'framer-motion';
 
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -16,51 +17,62 @@ const ViewProfile = () => {
 
 
 
-
   const [activityData, setActivityData] = useState(null);
 const [profileData, setProfileData] = useState(null); 
   const [currentDate, setCurrentDate] = useState(new Date());
-  const weeklyDataInSeconds = [500, 300, 1000, 1500, 1200, 1800, 2000]; // Times in seconds (for Monday to Sunday)
-  
-    const weeklyDataInMinutes = weeklyDataInSeconds.map((time) => Math.floor(time / 60));
-    const averageTimeSpent = Math.floor(weeklyDataInMinutes.reduce((a, b) => a + b, 0) / weeklyDataInMinutes.length);
 
-
-    // Chart.js configuration for the bar chart
-    const data = {
-      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      datasets: [
-        {
-          label: 'Time Spent (minutes)',
-          data: weeklyDataInMinutes,
-          backgroundColor: 'skyblue',
-          borderRadius: 5,
-          borderWidth: 1,
-        },
-      ],
-    };
   
-    const options = {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            stepSize: 1,
-          },
+  const weeklyDataInSeconds = activityData?.time || []; // Assuming time is an array of seconds for each day of the week
+console.log('Raw weeklyDataInSeconds:', weeklyDataInSeconds);
+
+// Remove null values and map to seconds, defaulting to 0 for null
+const filteredTimeData = weeklyDataInSeconds.map(time => (time === null ? 0 : time));
+
+// Convert the time data into minutes
+const weeklyDataInMinutes = filteredTimeData.map(time => Math.floor(time / 60));
+
+// Calculate the average time spent
+const averageTimeSpent = weeklyDataInMinutes.length > 0
+  ? Math.floor(weeklyDataInMinutes.reduce((a, b) => a + b, 0) / weeklyDataInMinutes.length)
+  : 0;
+
+console.log('Filtered Weekly Data in Minutes:', weeklyDataInMinutes);
+console.log('Average Time Spent:', averageTimeSpent);
+
+// Chart.js configuration for the bar chart
+const data = {
+  labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  datasets: [
+    {
+      label: 'Time Spent (minutes)',
+      data: weeklyDataInMinutes,
+      backgroundColor: 'skyblue',
+      borderRadius: 5,
+      borderWidth: 1,
+    },
+  ],
+};
+
+const options = {
+  responsive: true,
+  scales: {
+    y: {
+      beginAtZero: true,
+      ticks: {
+        stepSize: 1,
+      },
+    },
+  },
+  plugins: {
+    tooltip: {
+      callbacks: {
+        label: function (tooltipItem) {
+          return tooltipItem.raw + ' mins'; // Show in minutes
         },
       },
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: function (tooltipItem) {
-              return tooltipItem.raw + ' mins'; // Show in minutes
-            },
-          },
-        },
-      },
-    };
-
+    },
+  },
+};
 
     useEffect(() => {
       const getProfile = async () => {
@@ -69,7 +81,7 @@ const [profileData, setProfileData] = useState(null);
         const token = parsed?.token;
         console.log('Token:', token);
         if (!token) return;
-    
+      
         try {
           // Fetching profile data
           const response = await fetch(`${import.meta.env.VITE_API_URL}/user/profile`, {
@@ -79,16 +91,16 @@ const [profileData, setProfileData] = useState(null);
               'Authorization': `Bearer ${token}`,
             },
           });
-    
+      
           if (!response.ok) {
             throw new Error('Token verification failed');
           }
-    
+      
           const result = await response.json();
-          console.log('✅ Token verified:', result);
+          console.log('✅ Profile Data:', result);  // Log the full result here
           setProfileData(result.profile); // Assuming response contains profile data
-    
-          // After successfully fetching profile, fetch login data
+      
+          // After successfully fetching profile, fetch activity data
           const activityResponse = await fetch(`${import.meta.env.VITE_API_URL}/user/activity`, {
             method: 'POST',
             headers: {
@@ -96,34 +108,34 @@ const [profileData, setProfileData] = useState(null);
               'Authorization': `Bearer ${token}`,
             },
           });
-    
+      
           if (!activityResponse.ok) {
             throw new Error('Failed to fetch activity data');
           }
-    
+      
           const activityResult = await activityResponse.json();
-          console.log('✅ Activity data fetched:', activityResult);
-    
-          // Set the loginDates, loginScores, and streak
-          if (activityResult?.loginDates) {
+          console.log('✅ Activity Data:', activityResult);  // Log activity data here
+      
+          // Set the loginDates, loginScores, streak, and activeTime
+          if (activityResult?.activeTime) {
+            console.log('Active Time:', activityResult.activeTime);  // Check the activeTime here
             setActivityData({
               loginDates: activityResult.loginDates,
-              loginScores: activityResult.loginScores,  // Handle loginScores
-              streak: activityResult.streak,             // Handle streak
+              loginScores: activityResult.loginScores,
+              streak: activityResult.streak,
+              time: activityResult.activeTime, // Should have the activeTime data here
             });
           } else {
-            setActivityData({ loginDates: [], loginScores: [], streak: 0 });
+            setActivityData({ loginDates: [], loginScores: [], time: [], streak: 0 });
           }
-    
+      
         } catch (error) {
           console.error('❌ Error:', error);
         }
       };
-    
+      
       getProfile();
-    
     }, []);
-    
     
 
   const getMonthName = (date) => {
@@ -172,7 +184,7 @@ const [profileData, setProfileData] = useState(null);
   const loginScores = activityData?.loginScores || [];
   const lastLoginScore = loginScores.length > 0 ? loginScores[loginScores.length - 1] : 0;  // Get last score or fallback to 0
 
-  
+
   // Mock monthly score data
   const monthlyScores = [
     { month: 'January', score: 60 },
