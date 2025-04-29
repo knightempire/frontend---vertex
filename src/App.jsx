@@ -46,7 +46,7 @@ const AppRoutes = () => {
   if (!isAdminRoute && userId) {
     useActiveTime(userId);
   }
-
+  const hiddenRoutes = ['/login', '/SignupPage', '/forgot-password', '/cards', '/password'];
 
   return (
     <>
@@ -80,7 +80,10 @@ const AppRoutes = () => {
         <Route path="/admin/requests" element={<UserRequestsPage />} /> {/* New route for User Requests */}
       </Routes>
       
-      {!isAdminRoute && location.pathname !== '/password' && <ChatBot />}
+
+
+      {!isAdminRoute && !hiddenRoutes.includes(location.pathname) && <ChatBot />}
+
 
 
     </>

@@ -20,11 +20,13 @@ const Navbar = ({ onSearch }) => {
     setShowProfileMenu((prev) => !prev);
   };
 
-  // Simulate logout (you can replace this with actual logout functionality)
+
+
   const handleLogout = () => {
-    alert('Logging out...');
-    // You can implement actual logout logic here (e.g., clearing session, redirecting, etc.)
+    localStorage.removeItem('linkedin'); // Remove LinkedIn auth key
+    navigate('/login'); // Redirect to login
   };
+  
 
   return (
     <div className="bg-[#0073b1] p-4 shadow-md">
