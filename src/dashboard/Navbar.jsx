@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaHome, FaSearch, FaUserCircle, FaBell, FaLinkedin, FaSignOutAlt } from 'react-icons/fa';
+import { FaHome, FaSearch, FaUserCircle, FaBookmark, FaLinkedin, FaSignOutAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for routing
 
 const Navbar = ({ onSearch }) => {
@@ -58,7 +58,9 @@ const Navbar = ({ onSearch }) => {
             onClick={() => navigate('/feed')} // Navigate to /feed when clicked
           />
 
-          <FaBell className="text-white text-xl cursor-pointer hover:text-gray-200 transition-colors duration-300" />
+          <FaBookmark className="text-white text-xl cursor-pointer hover:text-gray-200 transition-colors duration-300" 
+                      onClick={() => navigate('/collection')} // Navigate to /feed when clicked
+             />
 
           {/* Profile Icon */}
           <div className="relative">
