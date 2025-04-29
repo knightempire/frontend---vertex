@@ -9,6 +9,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const ViewProfile = () => {
+    const navigate = useNavigate();
   // Mock profile data as const within the component
   const profileData = {
     name: 'John Doe',
