@@ -27,9 +27,9 @@ const Login = () => {
     const urlToken = params.get('token');
 
     if (urlToken) {
-      // Save the OAuth JWT and go straight to cards
+      // Save the OAuth JWT and go straight to feed
       localStorage.setItem('linkendin', JSON.stringify({ token: urlToken }));
-      return navigate('/cards');
+      return navigate('/feed');
     }
 
     // Otherwise, if we already have a token, verify it
@@ -58,7 +58,7 @@ const Login = () => {
         return;
       }
       await res.json();
-      navigate('/cards');
+      navigate('/feed');
     } catch (err) {
       console.error('Error verifying token:', err);
     }
@@ -100,7 +100,7 @@ const Login = () => {
           'linkendin',
           JSON.stringify({ token: data.token, name: base64Name })
         );
-        navigate('/cards');
+        navigate('/feed');
       } else {
         setPasswordError(data.message || 'Login failed. Please try again.');
       }
