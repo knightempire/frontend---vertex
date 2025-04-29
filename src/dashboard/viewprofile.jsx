@@ -14,15 +14,10 @@ const ViewProfile = () => {
 
 
 
-  const login = {
-    loginDates: [
-      '2025-04-01', '2025-04-02', '2025-04-03', 
-      '2025-04-05', '2025-04-06', '2025-04-07',
-      '2025-04-10', '2025-04-12', '2025-04-13',
-    ], // Mock login dates
-  }
 
 
+
+  const [activityData, setActivityData] = useState(null);
 const [profileData, setProfileData] = useState(null); 
   const [currentDate, setCurrentDate] = useState(new Date());
   const weeklyDataInSeconds = [500, 300, 1000, 1500, 1200, 1800, 2000]; // Times in seconds (for Monday to Sunday)
@@ -74,8 +69,9 @@ const [profileData, setProfileData] = useState(null);
         const token = parsed?.token;
         console.log('Token:', token);
         if (!token) return;
-  
+    
         try {
+          // Fetching profile data
           const response = await fetch(`${import.meta.env.VITE_API_URL}/user/profile`, {
             method: 'POST',
             headers: {
@@ -83,23 +79,52 @@ const [profileData, setProfileData] = useState(null);
               'Authorization': `Bearer ${token}`,
             },
           });
-  
+    
           if (!response.ok) {
             throw new Error('Token verification failed');
           }
-  
+    
           const result = await response.json();
           console.log('✅ Token verified:', result);
           setProfileData(result.profile); // Assuming response contains profile data
-  
+    
+          // After successfully fetching profile, fetch login data
+          const activityResponse = await fetch(`${import.meta.env.VITE_API_URL}/user/activity`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+    
+          if (!activityResponse.ok) {
+            throw new Error('Failed to fetch activity data');
+          }
+    
+          const activityResult = await activityResponse.json();
+          console.log('✅ Activity data fetched:', activityResult);
+    
+          // Set the loginDates, loginScores, and streak
+          if (activityResult?.loginDates) {
+            setActivityData({
+              loginDates: activityResult.loginDates,
+              loginScores: activityResult.loginScores,  // Handle loginScores
+              streak: activityResult.streak,             // Handle streak
+            });
+          } else {
+            setActivityData({ loginDates: [], loginScores: [], streak: 0 });
+          }
+    
         } catch (error) {
-          console.error('❌ Token verification error:', error);
+          console.error('❌ Error:', error);
         }
       };
-  
+    
       getProfile();
+    
     }, []);
-
+    
+    
 
   const getMonthName = (date) => {
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -121,7 +146,7 @@ const [profileData, setProfileData] = useState(null);
   const getCalendarDates = () => {
     const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-    const numDaysInMonth = endOfMonth.getDate();
+    const numDaysInMonth = endOfMonth.getDate()+1;
     const startDayOfWeek = (startOfMonth.getDay() === 0 ? 6 : startOfMonth.getDay() - 1);
     const calendarDates = [];
 
@@ -143,8 +168,11 @@ const [profileData, setProfileData] = useState(null);
     return calendarDates.slice(0, totalSlots);
   };
 
-  const maxConsecutiveDays = 5;
+  const maxConsecutiveDays = activityData?.streak || 0; // Use optional chaining to safely access streak or fallback to 0
+  const loginScores = activityData?.loginScores || [];
+  const lastLoginScore = loginScores.length > 0 ? loginScores[loginScores.length - 1] : 0;  // Get last score or fallback to 0
 
+  
   // Mock monthly score data
   const monthlyScores = [
     { month: 'January', score: 60 },
@@ -290,33 +318,49 @@ const [profileData, setProfileData] = useState(null);
 
               {/* Calendar View */}
               <div className="grid grid-cols-7 gap-x-1 gap-y-2 mt-4">
-                {getCalendarDates().map((date, index) => {
-                  if (!date) {
-                    return <div key={index} className="w-8 h-8"></div>;
-                  }
-                  const isLoggedIn = login.loginDates.includes(date);
-                  const currentDateObj = new Date(date);
-                  const isCurrentMonth = currentDateObj.getMonth() === currentDate.getMonth() && currentDateObj.getFullYear() === currentDate.getFullYear();
+          
+              {getCalendarDates().map((date, index) => {
+  if (!date) {
+    return <div key={index} className="w-8 h-8"></div>;
+  }
 
-                  return (
-                    <div
-                      key={index}
-                      className={`w-8 h-8 rounded-lg transition-all duration-200 ${isLoggedIn && isCurrentMonth ? 'bg-green-500' : 'bg-gray-300'} 
-                      ${isLoggedIn && isCurrentMonth ? 'hover:bg-green-600' : 'hover:bg-gray-400'} cursor-pointer flex justify-center items-center`}
-                    >
-                      <span className={`text-xs font-medium ${isLoggedIn && isCurrentMonth ? 'text-white' : 'text-gray-700'}`}>
-                        {currentDateObj.getDate()}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+  // Convert date in the calendar to the same format as loginDates in activityData
+  const currentDateObj = new Date(date);
+  const formattedDate = currentDateObj.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+
+  // Log activityData and the current formatted date for debugging
+  console.log("Formatted Date: ", formattedDate);
+  console.log("Login Dates in Activity Data: ", activityData?.loginDates);
+
+  // Check if activityData is not null and contains login dates
+  const isLoggedIn = activityData?.loginDates?.includes(formattedDate);
+  const isCurrentMonth = currentDateObj.getMonth() === currentDate.getMonth() && currentDateObj.getFullYear() === currentDate.getFullYear();
+
+  return (
+    <div
+      key={index}
+      className={`w-8 h-8 rounded-lg transition-all duration-200 ${isLoggedIn && isCurrentMonth ? 'bg-green-500' : 'bg-gray-300'} 
+      ${isLoggedIn && isCurrentMonth ? 'hover:bg-green-600' : 'hover:bg-gray-400'} cursor-pointer flex justify-center items-center`}
+    >
+      <span className={`text-xs font-medium ${isLoggedIn && isCurrentMonth ? 'text-white' : 'text-gray-700'}`}>
+        {currentDateObj.getDate()}
+      </span>
+    </div>
+  );
+})}
+
+
+</div>
+
               <p className="text-sm text-gray-500 mt-4">Days marked in green represent the days you logged in. Keep the streak going!</p>
             </div>
 
             {/* Score */}
             <div className="bg-white p-6 rounded-xl shadow-md mt-6">
-              <h3 className="text-xl font-semibold text-[#0073b1] mb-6">Score: 50</h3>
+            <h3 className="text-xl font-semibold text-[#0073b1] mb-6">
+             Login Score: {lastLoginScore}
+          </h3>
+
               <div className="text-gray-600 text-sm mb-4">Monthly Score Overview:</div>
               <div className="space-y-2">
                 {monthlyScores.map((data, index) => (
