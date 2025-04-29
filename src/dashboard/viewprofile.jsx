@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { FaArrowLeft, FaArrowRight, FaEdit } from 'react-icons/fa';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
@@ -97,6 +97,39 @@ const ViewProfile = () => {
       },
     };
 
+
+    useEffect(() => {
+      const getProfile = async () => {
+        const storedData = localStorage.getItem('linkendin');
+        const parsed = storedData && JSON.parse(storedData);
+        const token = parsed?.token;
+        console.log('Token:', token);
+        if (!token) return;
+  
+        try {
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/user/profile`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+  
+          if (!response.ok) {
+            throw new Error('Token verification failed');
+          }
+  
+          const result = await response.json();
+          console.log('✅ Token verified:', result);
+         
+        } catch (error) {
+          console.error('❌ Token verification error:', error);
+        }
+      };
+  
+      getProfile();
+
+  }, []);
 
 
   const getMonthName = (date) => {

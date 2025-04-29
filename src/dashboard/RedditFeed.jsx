@@ -10,6 +10,7 @@ import { FaFlag } from 'react-icons/fa';
 
 const RedditFeed = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [trendingPosts, setTrendingPosts] = useState([]);
@@ -230,7 +231,7 @@ const RedditFeed = () => {
       const token = parsed?.token;
       console.log('Token:', token);
       if (!token) return;
-  
+
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/user/verify-token`, {
           method: 'POST',
@@ -239,18 +240,19 @@ const RedditFeed = () => {
             'Authorization': `Bearer ${token}`,
           },
         });
-    
+
         if (!response.ok) {
           throw new Error('Token verification failed');
         }
-  
+
         const result = await response.json();
         console.log('✅ Token verified:', result);
+        setUser(result.user); // Store the user data here
       } catch (error) {
         console.error('❌ Token verification error:', error);
       }
     };
-  
+
     verifyToken();
     fetchPosts();
     fetchTrendingPosts();
@@ -287,23 +289,44 @@ const RedditFeed = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navbar onSearch={(term) => setSearchTerm(term)} />
+    <Navbar onSearch={(term) => setSearchTerm(term)} />
 
-      <div className="flex flex-col sm:flex-row">
-        
-      <div className="w-full sm:w-1/4 p-6 bg-[#f5f5f7] top-0 z-10   hidden sm:block" >
-  <div className="bg-white p-4 rounded-xl shadow-md">
-    <img src="https://via.placeholder.com/150" alt="Profile" className="w-32 h-32 rounded-full mx-auto mb-4" />
-    <h2 className="text-center text-xl font-semibold text-[#0073b1]"      onClick={() => navigate('/profile')}>John Doe</h2>
-    <p className="text-center text-gray-600">Software Engineer</p>
-    <p className="mt-4 text-center text-sm text-gray-500">A passionate developer who loves coding and technology.</p>
-
-    {/* Score and Streak Section */}
-    <div className="mt-4 text-center">
-      <p className="text-lg font-medium text-gray-700">Score: <span className="text-[#0073b1]">120</span></p>
-      <p className="text-lg font-medium text-gray-700">Streak: <span className="text-[#0073b1]">5 days</span></p>
+    <div className="flex flex-col sm:flex-row">
+      <div className="w-full sm:w-1/4 p-6 bg-[#f5f5f7] top-0 z-10 hidden sm:block">
+      <div className="bg-white p-4 rounded-xl shadow-md">
+  {/* Conditionally Render Profile Image or Initial Letter */}
+  {user?.image ? (
+    <img
+      src={user.image}
+      alt="Profile"
+      className="w-32 h-32 rounded-full mx-auto mb-4"
+    />
+  ) : (
+    <div className="bg-blue-500 text-white rounded-full h-32 w-32 flex items-center justify-center mx-auto mb-4">
+      <span className="text-xl font-semibold">
+        {user?.username ? user.username.charAt(0).toUpperCase() : 'N/A'}
+      </span>
     </div>
+  )}
+
+  {/* Username and Other Profile Information */}
+  <h2
+    className="text-center text-xl font-semibold text-[#0073b1] cursor-pointer hover:text-[#005682] underline"
+    onClick={() => navigate('/profile')}
+  >
+    {user?.username || 'John Doe'}
+  </h2>
+  <br />
+  <p className="text-center text-gray-600">{user?.name || 'Software Engineer'}</p>
+  <p className="mt-2 text-center text-sm text-gray-500">{user?.bio || 'A passionate developer'}</p>
+
+  {/* Score and Streak Section */}
+  <div className="mt-4 text-center">
+    <p className="text-lg font-medium text-gray-700">Score: <span className="text-[#0073b1]">120</span></p>
+    <p className="text-lg font-medium text-gray-700">Streak: <span className="text-[#0073b1]">5 days</span></p>
   </div>
+</div>
+
   
   <div className="bg-white p-4 rounded-xl mt-4 shadow-md">
       {/* Play Game Section */}

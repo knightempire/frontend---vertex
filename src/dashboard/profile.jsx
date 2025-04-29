@@ -23,26 +23,56 @@ const ProfileManagement = ({ onSearch }) => {
 
   // Simulate fetching initial data
   useEffect(() => {
-    const fetchData = () => {
-      setName('John Doe');
-      setEmail('john.doe@example.com');
-      setPhone('+1234567890');
-      setBio('Software engineer with a passion for technology and innovation.');
-      setJobTitle('Full Stack Developer');
-      setLocation('San Francisco, CA');
-      setSkills('JavaScript');
-      
-      // Simulating multiple entries for education and experience
-      setEducationList([{ degree: 'B.Sc. Computer Science', institution: 'University A', year: '2015' }]);
-      setExperienceList([{ jobTitle: 'Software Engineer', company: 'Tech Co.', startDate: '2016', endDate: '2020' }]);
+    const getProfile = async () => {
+      const storedData = localStorage.getItem('linkendin');
+      const parsed = storedData && JSON.parse(storedData);
+      const token = parsed?.token;
+      const email = parsed?.email || 'john.doe@example.com'; // get from storage or fallback
+    
+      console.log('Token:', token);
+      if (!token) return;
+    
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/user/profile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ email }), // 💡 Send email in body
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to fetch profile');
+        }
+    
+        const result = await response.json();
+        console.log('✅ Profile data:', result);
+    
+        const profile = result.profile;
+    
+        // 🧠 Set state with returned profile data
+        setName(profile.name);
+        setEmail(profile.email);
+        setPhone(profile.phone);
+        setBio(profile.bio);
+        setJobTitle(profile.jobTitle);
+        setLocation(profile.location);
+        setSkillTags(profile.skills || []);
+        setEducationList(profile.education || []);
+        setExperienceList(profile.experience || []);
+        setProfilePicture(profile.profilePicture);
+    
+      } catch (error) {
+        console.error('❌ Error fetching profile:', error);
+      }
     };
-    fetchData();
+    getProfile();
   }, []);
 
   // Handle form submission
-  const handleSave = () => {
-    // Validate all fields
-    if (!name || !email || !phone || !bio || !jobTitle || !location || !skills) {
+  const handleSave = async () => {
+    if (!name || !email || !phone || !bio || !jobTitle || !location || skillTags.length === 0) {
       Swal.fire({
         title: 'Error',
         text: 'All fields must be filled out!',
@@ -51,15 +81,65 @@ const ProfileManagement = ({ onSearch }) => {
       });
       return;
     }
-
-    // Simulate saving profile data
-    Swal.fire({
-      title: 'Success',
-      text: 'Your profile has been updated!',
-      icon: 'success',
-      confirmButtonColor: '#0073b1',
-    });
+  
+    const profileData = {
+      name,
+      email, // This should come from localStorage or token context ideally
+      phone,
+      bio,
+      jobTitle,
+      location,
+      skills: skillTags,
+      education: educationList,
+      experience: experienceList,
+    };
+  
+    console.log('📝 Submitted Profile Data:', profileData);
+  
+    try {
+      const storedData = localStorage.getItem('linkendin');
+      const parsed = storedData && JSON.parse(storedData);
+      const token = parsed?.token;
+  
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/user/profile/update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // if your backend is using JWT
+        },
+        body: JSON.stringify(profileData),
+      });
+  
+      const result = await response.json();
+  
+      if (response.ok) {
+        Swal.fire({
+          title: 'Success',
+          text: result.message || 'Your profile has been updated!',
+          icon: 'success',
+          confirmButtonColor: '#0073b1',
+        });
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: result.message || 'Failed to update profile.',
+          icon: 'error',
+          confirmButtonColor: '#0073b1',
+        });
+      }
+  
+    } catch (error) {
+      console.error('❌ Profile update error:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'An unexpected error occurred.',
+        icon: 'error',
+        confirmButtonColor: '#0073b1',
+      });
+    }
   };
+  
+  
 
   // Handle profile picture change
   const handleProfilePictureChange = (e) => {
@@ -115,11 +195,18 @@ const ProfileManagement = ({ onSearch }) => {
             <h2 className="text-2xl font-semibold text-[#0073b1] mb-6 text-center">Edit Profile</h2>
             <div className="flex justify-center mb-6">
               <div className="relative">
-                <img
-                  src={profilePicture || 'https://via.placeholder.com/150'}
-                  alt="Profile"
-                  className="w-32 h-32 rounded-full object-cover border-2 border-[#0073b1]"
-                />
+              {profilePicture ? (
+  <img
+    src={profilePicture}
+    alt="Profile"
+    className="w-32 h-32 rounded-full object-cover border-2 border-[#0073b1]"
+  />
+) : (
+  <div className="bg-blue-500 text-white rounded-full h-32 w-32 flex items-center justify-center text-4xl font-semibold">
+    {name ? name.charAt(0).toUpperCase() : 'N'}
+  </div>
+)}
+
                 <label htmlFor="profilePicture" className="absolute bottom-0 right-0 bg-[#0073b1] text-white p-2 rounded-full cursor-pointer">
                   <FaCamera />
                   <input
@@ -154,7 +241,7 @@ const ProfileManagement = ({ onSearch }) => {
                   type="email"
                   id="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  readOnly
                   className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0073b1] focus:border-[#0073b1]"
                 />
               </div>
