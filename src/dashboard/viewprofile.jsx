@@ -11,50 +11,19 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const ViewProfile = () => {
     const navigate = useNavigate();
   // Mock profile data as const within the component
-  const profileData = {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+1234567890',
-    bio: 'Software engineer with a passion for technology and innovation.',
-    jobTitle: 'Full Stack Developer',
-    location: 'San Francisco, CA',
-    skills: ['JavaScript', 'React', 'Node.js', 'Python'],
-    experience: [
-      {
-        jobTitle: 'Software Engineer',
-        company: 'Tech Co.',
-        startDate: '2016-01',
-        endDate: '2020-12',
-        description: 'Worked on developing full-stack applications using JavaScript, React, and Node.js.',
-      },
-      {
-        jobTitle: 'Frontend Developer',
-        company: 'Design Inc.',
-        startDate: '2014-01',
-        endDate: '2015-12',
-        description: 'Responsible for creating user interfaces using HTML, CSS, and JavaScript.',
-      }
-    ],
-    education: [
-      {
-        degree: 'B.Sc. Computer Science',
-        institution: 'University A',
-        year: '2015',
-      },
-      {
-        degree: 'M.Sc. Software Engineering',
-        institution: 'University B',
-        year: '2017',
-      }
-    ],
-    profilePicture: 'https://via.placeholder.com/150',
+
+
+
+  const login = {
     loginDates: [
       '2025-04-01', '2025-04-02', '2025-04-03', 
       '2025-04-05', '2025-04-06', '2025-04-07',
       '2025-04-10', '2025-04-12', '2025-04-13',
     ], // Mock login dates
-  };
+  }
 
+
+const [profileData, setProfileData] = useState(null); 
   const [currentDate, setCurrentDate] = useState(new Date());
   const weeklyDataInSeconds = [500, 300, 1000, 1500, 1200, 1800, 2000]; // Times in seconds (for Monday to Sunday)
   
@@ -121,15 +90,15 @@ const ViewProfile = () => {
   
           const result = await response.json();
           console.log('✅ Token verified:', result);
-         
+          setProfileData(result.profile); // Assuming response contains profile data
+  
         } catch (error) {
           console.error('❌ Token verification error:', error);
         }
       };
   
       getProfile();
-
-  }, []);
+    }, []);
 
 
   const getMonthName = (date) => {
@@ -196,44 +165,56 @@ const ViewProfile = () => {
           <div className="w-full md:w-2/3 space-y-8">
             {/* Profile Picture and Cover Photo */}
             <div className="bg-white p-6 rounded-xl shadow-md">
-  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6">
-    {/* Profile Info Section */}
-    <div className="flex sm:flex-row sm:space-x-4 items-center justify-center sm:justify-start">
-      <img
-        src={profileData.profilePicture || 'https://via.placeholder.com/150'}
-        alt="Profile"
-        className="w-32 h-32 rounded-full object-cover border-2 border-[#0073b1] mb-4 sm:mb-0"
-      />
-      <div>
-        <h2 className="text-2xl font-semibold text-[#0073b1]">{profileData.name}</h2>
-        <p className="text-lg text-gray-600">{profileData.jobTitle}</p>
-      </div>
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6">
+                {/* Profile Info Section */}
+                <div className="flex sm:flex-row sm:space-x-4 items-center justify-center sm:justify-start">
+                {profileData ? (
+  profileData.profilePicture ? (
+    <img
+      src={profileData.profilePicture}
+      alt="Profile"
+      className="w-32 h-32 rounded-full object-cover border-2 border-[#0073b1]"
+    />
+  ) : (
+    <div className="bg-blue-500 text-white rounded-full h-32 w-32 flex items-center justify-center text-4xl font-semibold">
+      {profileData?.username ? profileData?.username.charAt(0).toUpperCase() : 'N'}
     </div>
-
-    {/* Edit Button */}
-    <button 
-  className="text-[#0073b1] flex items-center space-x-2 mt-4 sm:mt-0" 
-  onClick={() => navigate('/editprofile')}
->
-  <FaEdit />
-  <span>Edit Profile</span>
-</button>
-
+  )
+) : (
+  // Fallback content if `profileData` is missing
+  <div className="bg-blue-500 text-white rounded-full h-32 w-32 flex items-center justify-center text-4xl font-semibold">
+    N
   </div>
-</div>
+)}
 
+                  <div>
+                    <h2 className="text-2xl font-semibold text-[#0073b1]">{profileData?.name}</h2>
+                    <p className="text-lg text-gray-600">{profileData?.username}</p>
+                  </div>
+                </div>
+
+                {/* Edit Button */}
+                <button
+                  className="text-[#0073b1] flex items-center space-x-2 mt-4 sm:mt-0"
+                  onClick={() => navigate('/editprofile')}
+                >
+                  <FaEdit />
+                  <span>Edit Profile</span>
+                </button>
+              </div>
+            </div>
 
             {/* Bio */}
             <div className="bg-white p-6 rounded-xl shadow-md">
               <h3 className="text-xl font-semibold text-[#0073b1] mb-6">About</h3>
-              <p className="text-gray-600">{profileData.bio}</p>
+              <p className="text-gray-600">{profileData?.bio}</p>
             </div>
 
             {/* Skills */}
             <div className="bg-white p-6 rounded-xl shadow-md">
               <h3 className="text-xl font-semibold text-[#0073b1] mb-6">Skills</h3>
               <div className="flex flex-wrap space-x-4">
-                {profileData.skills.map((skill, index) => (
+                {profileData?.skills?.map((skill, index) => (
                   <span key={index} className="bg-[#f3f4f6] text-gray-600 px-4 py-2 rounded-full text-sm">
                     {skill}
                   </span>
@@ -244,7 +225,7 @@ const ViewProfile = () => {
             {/* Experience */}
             <div className="bg-white p-6 rounded-xl shadow-md">
               <h3 className="text-xl font-semibold text-[#0073b1] mb-6">Experience</h3>
-              {profileData.experience.map((experience, index) => (
+              {profileData?.experience?.map((experience, index) => (
                 <div key={index} className="space-y-4">
                   <div className="space-y-2 flex justify-between">
                     <div className="space-y-1">
@@ -256,7 +237,7 @@ const ViewProfile = () => {
                       <p>{experience.startDate} - {experience.endDate}</p>
                     </div>
                   </div>
-                  {index !== profileData.experience.length - 1 && (
+                  {index !== profileData?.experience?.length - 1 && (
                     <div className="my-4 border-t-2 border-[#0073b1]"></div>
                   )}
                 </div>
@@ -265,25 +246,29 @@ const ViewProfile = () => {
 
             {/* Education */}
             <div className="bg-white p-6 rounded-xl shadow-md">
-              <h3 className="text-xl font-semibold text-[#0073b1] mb-6">Education</h3>
-              {profileData.education.map((education, index) => (
-                <div key={index} className="space-y-4">
-                  <div className="space-y-2 flex justify-between">
-                    <div className="space-y-1">
-                      <h4 className="text-lg font-semibold text-gray-800">{education.degree}</h4>
-                      <p className="text-gray-600">{education.institution}</p>
-                    </div>
-                    <div className="text-gray-500 flex flex-col items-end">
-                      <p>{education.year}</p>
-                    </div>
-                  </div>
-                  {index !== profileData.education.length - 1 && (
-                    <div className="my-4 border-t-2 border-[#0073b1]"></div>
-                  )}
-                </div>
-              ))}
-            </div>
+  <h3 className="text-xl font-semibold text-[#0073b1] mb-6">Education</h3>
+  {profileData?.education?.map((education, index) => (
+    <div key={index} className="space-y-4">
+      <div className="space-y-2 flex justify-between">
+        <div className="space-y-1">
+          <h4 className="text-lg font-semibold text-gray-800">{education.institution}</h4>
+          <p className="text-gray-600"> {education.degree}</p>
+        </div>
+        <div className="text-gray-500 flex flex-col items-end">
+          {/* Optional: Add start and end dates if available, or show the year */}
+          <p>{education.year}</p> {/* Show the year for now */}
+        </div>
+      </div>
+      {index !== profileData?.education?.length - 1 && (
+        <div className="my-4 border-t-2 border-[#0073b1]"></div>
+      )}
+    </div>
+  ))}
+</div>
+
+
           </div>
+
 
           {/* Right Section - Login Streak and Score */}
           <div className="w-full md:w-1/3">
@@ -309,7 +294,7 @@ const ViewProfile = () => {
                   if (!date) {
                     return <div key={index} className="w-8 h-8"></div>;
                   }
-                  const isLoggedIn = profileData.loginDates.includes(date);
+                  const isLoggedIn = login.loginDates.includes(date);
                   const currentDateObj = new Date(date);
                   const isCurrentMonth = currentDateObj.getMonth() === currentDate.getMonth() && currentDateObj.getFullYear() === currentDate.getFullYear();
 

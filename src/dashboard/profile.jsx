@@ -6,6 +6,7 @@ import Navbar from './Navbar'; // Assuming you have a Navbar component
 const ProfileManagement = ({ onSearch }) => {
   // State to manage form fields
   const [name, setName] = useState('');
+  const [username, setUsername] = useState(''); // Added username state
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [bio, setBio] = useState('');
@@ -27,7 +28,7 @@ const ProfileManagement = ({ onSearch }) => {
       const storedData = localStorage.getItem('linkendin');
       const parsed = storedData && JSON.parse(storedData);
       const token = parsed?.token;
-      const email = parsed?.email || 'john.doe@example.com'; // get from storage or fallback
+      const email = parsed?.email
     
       console.log('Token:', token);
       if (!token) return;
@@ -53,6 +54,7 @@ const ProfileManagement = ({ onSearch }) => {
     
         // 🧠 Set state with returned profile data
         setName(profile.name);
+        setUsername(profile.username); // Set username from profile data
         setEmail(profile.email);
         setPhone(profile.phone);
         setBio(profile.bio);
@@ -84,6 +86,7 @@ const ProfileManagement = ({ onSearch }) => {
   
     const profileData = {
       name,
+      username,
       email, // This should come from localStorage or token context ideally
       phone,
       bio,
@@ -94,7 +97,7 @@ const ProfileManagement = ({ onSearch }) => {
       experience: experienceList,
     };
   
-    console.log('📝 Submitted Profile Data:', profileData);
+    console.log('Profile Data:', profileData); // Log to check if name is being included
   
     try {
       const storedData = localStorage.getItem('linkendin');
@@ -127,7 +130,6 @@ const ProfileManagement = ({ onSearch }) => {
           confirmButtonColor: '#0073b1',
         });
       }
-  
     } catch (error) {
       console.error('❌ Profile update error:', error);
       Swal.fire({
@@ -138,6 +140,8 @@ const ProfileManagement = ({ onSearch }) => {
       });
     }
   };
+  
+  
   
   
 
@@ -203,7 +207,7 @@ const ProfileManagement = ({ onSearch }) => {
   />
 ) : (
   <div className="bg-blue-500 text-white rounded-full h-32 w-32 flex items-center justify-center text-4xl font-semibold">
-    {name ? name.charAt(0).toUpperCase() : 'N'}
+    {username ? username.charAt(0).toUpperCase() : 'N'}
   </div>
 )}
 
@@ -247,6 +251,17 @@ const ProfileManagement = ({ onSearch }) => {
               </div>
 
               <div>
+                <label htmlFor="name" className="block text-sm text-gray-600 font-medium mb-1">Full Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0073b1] focus:border-[#0073b1]"
+                />
+              </div>
+
+              <div>
                 <label htmlFor="phone" className="block text-sm text-gray-600 font-medium mb-1">Phone Number</label>
                 <input
                   type="text"
@@ -256,6 +271,18 @@ const ProfileManagement = ({ onSearch }) => {
                   className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0073b1] focus:border-[#0073b1]"
                 />
               </div>
+
+              <div>
+                <label htmlFor="phone" className="block text-sm text-gray-600 font-medium mb-1">City</label>
+                <input
+                  type="text"
+                  id="phone"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0073b1] focus:border-[#0073b1]"
+                />
+              </div>
+
 
               <div>
                 <label htmlFor="bio" className="block text-sm text-gray-600 font-medium mb-1">Bio</label>
