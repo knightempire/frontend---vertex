@@ -224,6 +224,34 @@ const RedditFeed = () => {
   
 
   useEffect(() => {
+    const verifyToken = async () => {
+      const storedData = localStorage.getItem('linkendin');
+      const parsed = storedData && JSON.parse(storedData);
+      const token = parsed?.token;
+      console.log('Token:', token);
+      if (!token) return;
+  
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/user/verify-token`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error('Token verification failed');
+        }
+  
+        const result = await response.json();
+        console.log('✅ Token verified:', result);
+      } catch (error) {
+        console.error('❌ Token verification error:', error);
+      }
+    };
+  
+    verifyToken();
     fetchPosts();
     fetchTrendingPosts();
   }, [searchTerm]);

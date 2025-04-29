@@ -57,7 +57,8 @@ const AppRoutes = () => {
         <Route path="/SignupPage" element={<SignupPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/cards" element={<Cards />} />
-        <Route path="/password" element={<PasswordSettings />} />+
+        <Route path="/password" element={<PasswordSettings />} />
+        
         <Route path="/feed" element={<RedditFeed />} />
         <Route path="/editprofile" element={<Profile />} />
         <Route path="/profile" element={<ViewProfile />} />
