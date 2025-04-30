@@ -23,9 +23,11 @@ const Navbar = ({ onSearch }) => {
 
 
   const handleLogout = () => {
-    localStorage.removeItem('linkedin'); // Remove LinkedIn auth key
-    navigate('/login'); // Redirect to login
+    localStorage.removeItem('linkendin'); // Remove LinkedIn auth key
+    console.log('User logged out'); // Log logout action
+    navigate('/'); // Redirect to login
   };
+  
   
 
   return (

@@ -29,7 +29,8 @@ const Login = () => {
     if (urlToken) {
       // Save the OAuth JWT and go straight to feed
       localStorage.setItem('linkendin', JSON.stringify({ token: urlToken }));
-      return navigate('/feed');
+      console.log('Google token saved to localStorage:', urlToken);
+      verifyToken(urlToken);
     }
 
     // Otherwise, if we already have a token, verify it
@@ -42,27 +43,49 @@ const Login = () => {
 
   // Verify JWT w/ your backend
   const verifyToken = async (token) => {
+    console.log('Verifying token:', token); // Log token verification attempt
+  
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/users/verify-token`,
+        `${import.meta.env.VITE_API_URL}/user/verify-token`,
         {
-          method: 'GET',
+          method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         }
       );
+  
       if (!res.ok) {
+        console.log('Token verification failed:', res.statusText); // Log if the response is not ok
         localStorage.removeItem('linkendin');
         return;
       }
-      await res.json();
-      navigate('/feed');
+  
+      const data = await res.json();
+      console.log('Token verified successfully:', data); // Log the successful verification response data
+  
+      // Store token and role information in localStorage
+      const { role } = data.user; // Assuming data includes user info
+      localStorage.setItem(
+        'linkendin',
+        JSON.stringify({ token, role, name: btoa(data.user.name) })
+      );
+  
+      // Navigate based on user role
+      if (role === 'admin') {
+        console.log('Navigating to admin page');
+        navigate('/admin');
+      } else if (role === 'user') {
+        console.log('Navigating to feed page');
+        navigate('/feed');
+      }
     } catch (err) {
-      console.error('Error verifying token:', err);
+      console.error('Error verifying token:', err); // Log any error encountered during token verification
     }
   };
+  
 
   // Email format check
   const validateEmail = (email) =>

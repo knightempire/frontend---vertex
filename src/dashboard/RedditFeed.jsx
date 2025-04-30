@@ -191,15 +191,19 @@ const RedditFeed = () => {
 
 
   const handleReport = async (post) => {
+    // Define the report types
+    const reportTypes = {
+      spam: 'Spam',
+      harassment: 'Harassment',
+      misinformation: 'Misinformation',
+      other: 'Other',
+    };
+  
+    // Use Swal to let the user select the reason for reporting
     const { value: reason } = await Swal.fire({
       title: 'Report Post',
       input: 'select',
-      inputOptions: {
-        spam: 'Spam',
-        harassment: 'Harassment',
-        misinformation: 'Misinformation',
-        other: 'Other',
-      },
+      inputOptions: reportTypes,  // This will show the report types dynamically
       inputPlaceholder: 'Select a reason',
       showCancelButton: true,
       confirmButtonColor: primaryColor,
@@ -209,13 +213,40 @@ const RedditFeed = () => {
     if (reason) {
       Swal.fire({
         title: 'Reported!',
-        text: `You reported this post for: ${reason}`,
+        text: `You reported this post for: ${reportTypes[reason]}`, // Show the selected reason
         icon: 'success',
         confirmButtonColor: primaryColor,
       });
   
-      // You can also send this report to a backend API if needed
-      console.log(`Post ID ${post.id} reported for: ${reason}`);
+      // Assuming user authentication info is stored in localStorage
+      const storedData = localStorage.getItem('linkendin');
+      const parsed = storedData && JSON.parse(storedData);
+      const token = parsed?.token;
+      console.log('Token:', token);
+  
+      // Make the API call to report the post
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/user/report`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,  // Send the token for authorization
+          },
+          body: JSON.stringify({
+            postId: post.id,  // Send the post ID
+            reportType: reason,  // Send the report type selected by the user
+          }),
+        });
+  
+        const data = await response.json();
+        if (response.ok) {
+          console.log('Report submitted successfully:', data);
+        } else {
+          console.error('Error submitting report:', data.message);
+        }
+      } catch (error) {
+        console.error('Error reporting post:', error);
+      }
     }
   };
   

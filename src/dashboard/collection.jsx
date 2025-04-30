@@ -67,17 +67,18 @@ const CollectionPage = () => {
   const fetchPosts = async () => {
     console.log("Fetching posts...");
     setLoading(true);
-    
+  
     try {
       // Load cached posts from localStorage
       const cachedPosts = localStorage.getItem('collectionPosts');
       const cachedPostsArray = cachedPosts ? JSON.parse(cachedPosts) : [];
-      
+  
       // Fetch post IDs from the API
       const postIds = await callApiToGetPostIds();
   
-      if (postIds.length === 0) {
-        console.log("No post IDs received from the API.");
+      // Safely check if postIds is a valid array
+      if (!Array.isArray(postIds) || postIds.length === 0) {
+        console.log("No post IDs received or postIds is not an array.");
         setLoading(false);
         return;
       }
@@ -91,10 +92,10 @@ const CollectionPage = () => {
       );
   
       console.log("Missing post IDs:", missingPostIds);
-      
+  
       if (missingPostIds.length > 0) {
         console.log("Fetching missing posts from API...");
-        
+  
         // Fetch missing posts in parallel
         const newPostsResponses = await Promise.all(
           missingPostIds.map(postId => 
@@ -121,7 +122,7 @@ const CollectionPage = () => {
   
         setPosts(allPosts);
         localStorage.setItem('collectionPosts', JSON.stringify(allPosts));
-        
+  
         console.log(`Added ${validNewPosts.length} new posts to collection`);
       } else {
         console.log("All posts already cached, no need to fetch");
