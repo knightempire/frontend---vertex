@@ -134,6 +134,7 @@ const options = {
         }
       };
       
+      
       getProfile();
     }, []);
     

@@ -1,66 +1,59 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom'; // To detect route changes
 
 const useActiveTime = () => {
+  const [token, setToken] = useState(null);  // Add state to store token
   const startTimeRef = useRef(Date.now());
   const totalTimeRef = useRef(0);
   const isActive = useRef(true);
   const location = useLocation(); // Get the current route
 
-  // Retrieve and parse the 'linkendin' object from localStorage
-  const storedData = localStorage.getItem('linkendin');
-  const parsed = storedData ? JSON.parse(storedData) : null;
-  const token = parsed?.token;
-
-  if (!token) {
-    console.error('[useActiveTime] No token found in localStorage.');
-    return;
-  }
-
-  // Function to send active time to the server with await using fetch
-  const sendActiveTime = async (time) => {
-    if (!token) {
-      console.error('[useActiveTime] No token found, aborting send.');
-      return;
-    }
-
-    console.log(`[useActiveTime] Sending active time to server: ${time} seconds with token: ${token}`);
-
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/user/time`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ activityTime: time }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to send active time: ${response.statusText}`);
-      }
-
-      console.log(`[useActiveTime] Active time sent to server: ${time}`);
-    } catch (error) {
-      console.error('[useActiveTime] Error sending active time:', error.message);
-    }
-  };
-
-  const updateTime = () => {
-    if (isActive.current) {
-      const now = Date.now();
-      totalTimeRef.current += now - startTimeRef.current;
-    }
-    startTimeRef.current = Date.now();
-  };
-
+  // Retrieve and parse the 'linkendin' object from localStorage inside useEffect
   useEffect(() => {
-    console.log('[useActiveTime] useEffect triggered, checking LinkedIn authentication');
+    const storedData = localStorage.getItem('linkendin');
+    const parsed = storedData ? JSON.parse(storedData) : null;
+    setToken(parsed?.token); // Set token after reading from localStorage
+  }, []);  // Runs only once on component mount
 
+  // Always set the effect and skip logic if no token
+  useEffect(() => {
     if (!token) {
-      console.log('[useActiveTime] LinkedIn not authenticated, skipping active time tracking');
-      return;
+      console.error('[useActiveTime] No token found in localStorage.');
+      return;  // Exit early if no token is found
     }
+
+    console.log('[useActiveTime] useEffect triggered, checking LinkedIn authentication');
+    
+    // Function to send active time to the server with await using fetch
+    const sendActiveTime = async (time) => {
+      console.log(`[useActiveTime] Sending active time to server: ${time} seconds with token: ${token}`);
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/user/time`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ activityTime: time }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to send active time: ${response.statusText}`);
+        }
+
+        console.log(`[useActiveTime] Active time sent to server: ${time}`);
+      } catch (error) {
+        console.error('[useActiveTime] Error sending active time:', error.message);
+      }
+    };
+
+    const updateTime = () => {
+      if (isActive.current) {
+        const now = Date.now();
+        totalTimeRef.current += now - startTimeRef.current;
+      }
+      startTimeRef.current = Date.now();
+    };
 
     // Handle visibility change (page is in background/foreground)
     const handleVisibilityChange = () => {
@@ -77,7 +70,6 @@ const useActiveTime = () => {
       updateTime();
       const totalSeconds = Math.floor(totalTimeRef.current / 1000);
       console.log(`[useActiveTime] Final active time on unload: ${totalSeconds} seconds`);
-      // Wait for the active time to be sent before unloading
       await sendActiveTime(totalSeconds);
     };
 
@@ -87,11 +79,7 @@ const useActiveTime = () => {
       updateTime();
       const totalSeconds = Math.floor(totalTimeRef.current / 1000);
       console.log(`[useActiveTime] Active time on route change: ${totalSeconds} seconds`);
-
-      // Send active time when route changes
       await sendActiveTime(totalSeconds);
-
-      // Reset time tracking after sending
       totalTimeRef.current = 0;
       startTimeRef.current = Date.now();
       console.log('[useActiveTime] Timer reset after route change');
@@ -101,7 +89,7 @@ const useActiveTime = () => {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     // Listen for window unload event (when the user navigates away or closes the tab)
     window.addEventListener('beforeunload', handleUnload);
-
+    
     // Trigger route change handler when the route changes
     handleRouteChange();
 
@@ -116,7 +104,7 @@ const useActiveTime = () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleUnload);
     };
-  }, [location, token]); // Trigger effect on route change or token change
+  }, [location, token]);  // Trigger effect on route change or token change
 
 };
 

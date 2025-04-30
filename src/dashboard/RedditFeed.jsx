@@ -13,14 +13,9 @@ const RedditFeed = () => {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+    const [activityData, setActivityData] = useState(null);
   const [trendingPosts, setTrendingPosts] = useState([]);
-  const [peopleYouMightKnow, setPeopleYouMightKnow] = useState([
-    { name: 'Alice Johnson', username: 'alice123', bio: 'Web Developer' },
-    { name: 'Bob Smith', username: 'bob_smith', bio: 'Graphic Designer' },
-    { name: 'Charlie Brown', username: 'charlie_b', bio: 'Product Manager' },
-    { name: 'David Lee', username: 'david_lee', bio: 'Data Scientist' },
-    { name: 'Eva White', username: 'eva_white', bio: 'Software Engineer' },
-  ]);
+  const [peopleYouMightKnow, setPeopleYouMightKnow] = useState([]);
   const feedEndRef = useRef(null);
   const [after, setAfter] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -194,6 +189,7 @@ const RedditFeed = () => {
   };
   
 
+
   const handleReport = async (post) => {
     const { value: reason } = await Swal.fire({
       title: 'Report Post',
@@ -223,7 +219,6 @@ const RedditFeed = () => {
     }
   };
   
-
   useEffect(() => {
     const verifyToken = async () => {
       const storedData = localStorage.getItem('linkendin');
@@ -253,14 +248,158 @@ const RedditFeed = () => {
       }
     };
 
+    const getProfile = async () => {
+      const storedData = localStorage.getItem('linkendin');
+      const parsed = storedData && JSON.parse(storedData);
+      const token = parsed?.token;
+      console.log('Token:', token);
+      if (!token) return;
+
+      try {
+        const activityResponse = await fetch(`${import.meta.env.VITE_API_URL}/user/activity`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!activityResponse.ok) {
+          throw new Error('Failed to fetch activity data');
+        }
+
+        const activityResult = await activityResponse.json();
+        console.log('✅ Activity Data:', activityResult);
+
+        if (activityResult?.activeTime) {
+          console.log('Active Time:', activityResult.activeTime);
+          setActivityData({
+            loginDates: activityResult.loginDates,
+            loginScores: activityResult.loginScores,
+            streak: activityResult.streak,
+            time: activityResult.activeTime,
+          });
+        } else {
+          setActivityData({ loginDates: [], loginScores: [], time: [], streak: 0 });
+        }
+      } catch (error) {
+        console.error('❌ Error:', error);
+      }
+    };
+
+    // Fetching people data from GET /user/people API
+    const fetchPeople = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/user/people`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+    
+        if (!response.ok) {
+          console.error('❌ Response not ok:', response.status, response.statusText);
+          throw new Error('Failed to fetch people data');
+        }
+    
+        const peopleData = await response.json();
+        console.log('✅ People Data:', peopleData);
+    
+        // Check if the response contains the 'users' array
+        if (peopleData?.users && Array.isArray(peopleData.users)) {
+          // Set the users data
+          setPeopleYouMightKnow(peopleData.users);
+        } else {
+          console.error('❌ No valid users data found');
+        }
+      } catch (error) {
+        console.error('❌ Error fetching people data:', error);
+      }
+    };
+    
+    
+    
+    const getRandomPeople = (peopleList, count) => {
+      // Shuffle the people list and pick the first 'count' people
+      const shuffled = [...peopleList].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, count);
+    };
+    
+    console.log('ppl',peopleYouMightKnow);
+
+
+    // Call all the functions on component mount
     verifyToken();
+    getProfile();
+    fetchPeople(); // Fetch people data here
     fetchPosts();
     fetchTrendingPosts();
-  }, [searchTerm]);
+  }, [searchTerm]); // This dependency array ensures that useEffect is triggered when searchTerm changes
+
+
+  const maxConsecutiveDays = activityData?.streak || 0; // Use optional chaining to safely access streak or fallback to 0
+  const loginScores = activityData?.loginScores || [];
+  const lastLoginScore = loginScores.length > 0 ? loginScores[loginScores.length - 1] : 0;  // Get last score or fallback to 0
+
 
   const handlePostAction = (action, post) => {
     console.log(`Action: ${action} | Post ID: ${post.id}`);
   };
+
+  const handlecollection = (action, post) => {
+    console.log(`Action: ${action} | Post ID: ${post.id}`);
+    sendPostData(post.id); // Call sendPostData with the post ID
+  };
+  
+  let isRequestInProgress = false;
+
+  const sendPostData = async (postId) => {
+      if (isRequestInProgress) {
+          console.log('Request already in progress, please wait...');
+          return;  // Prevent further requests while one is in progress
+      }
+  
+      console.log("sendPostData called with postId:", postId);
+  
+      const storedData = localStorage.getItem('linkendin');
+      const parsed = storedData && JSON.parse(storedData);
+      const token = parsed?.token;
+  
+      if (!token) {
+          console.log('No token or email found!');
+          return;  // You may want to show an error or redirect the user
+      }
+  
+      console.log("Sending post data:", { postId });
+  
+      isRequestInProgress = true;  // Set the flag to indicate a request is in progress
+  
+      try {
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/user/collect`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                  postId: postId
+              }),
+          });
+  
+          if (!response.ok) {
+              console.error('API call failed:', response.status);
+              return;
+          }
+  
+          const data = await response.json();
+          console.log('Response:', data);
+      } catch (error) {
+          console.error('Error sending post data:', error);
+      } finally {
+          isRequestInProgress = false;  // Reset the flag when the request finishes
+      }
+  };
+  
 
   const renderMedia = (post) => {
     if (post.is_video && post.media) {
@@ -322,8 +461,12 @@ const RedditFeed = () => {
 
   {/* Score and Streak Section */}
   <div className="mt-4 text-center">
-    <p className="text-lg font-medium text-gray-700">Score: <span className="text-[#0073b1]">120</span></p>
-    <p className="text-lg font-medium text-gray-700">Streak: <span className="text-[#0073b1]">5 days</span></p>
+  <p className="text-lg font-medium text-gray-700">
+      Score: <span className="text-[#0073b1]">{lastLoginScore}</span>
+    </p>
+    <p className="text-lg font-medium text-gray-700">
+      Streak: <span className="text-[#0073b1]">{maxConsecutiveDays}</span>
+    </p>
   </div>
 </div>
 
@@ -424,7 +567,7 @@ const RedditFeed = () => {
                     className="cursor-pointer text-[#0073b1] hover:text-[#005682]"
                   />
                   <FaBookmark
-                    onClick={() => handlePostAction('Save', post)}
+                    onClick={() => handlecollection('Save', post)}
                     className="cursor-pointer text-[#0073b1] hover:text-[#005682]"
                   />
                   <FaFlag
@@ -481,21 +624,20 @@ const RedditFeed = () => {
     View More
   </button>
 
-  <ul>
-    {peopleYouMightKnow.map((person, index) => (
-      <li key={index} className="mb-4 flex justify-between items-center">
-        <div className="flex flex-col">
-          <h4 className="font-semibold text-gray-800">{person.name}</h4>
-          <p className="text-sm text-gray-500">@{person.username}</p>
-          <p className="text-xs text-gray-400">{person.bio}</p>
-        </div>
-        <div className="flex justify-end items-center space-x-4">
-          <button className="px-4 py-2 bg-[#0073b1] text-white rounded-full flex items-center space-x-2 hover:bg-[#005682] text-sm">
-            <FaUserPlus className="text-white" />
-            <span>Connect</span>
-          </button>
-        </div>
-      </li>
+  <ul>{
+  peopleYouMightKnow.map((person) => (
+    <li key={person.username} className="mb-4 flex justify-between items-center">
+      <div className="flex flex-col">
+        <h4 className="font-semibold text-gray-800">{person.name}</h4>
+        <p className="text-sm text-gray-500">@{person.username}</p>
+      </div>
+      <div className="flex justify-end items-center space-x-4">
+        <button className="px-4 py-2 bg-[#0073b1] text-white rounded-full flex items-center space-x-2 hover:bg-[#005682] text-sm">
+          <FaUserPlus className="text-white" />
+          <span>Connect</span>
+        </button>
+      </div>
+    </li>
     ))}
   </ul>
 </div>
