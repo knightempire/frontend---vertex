@@ -9,8 +9,7 @@ import PasswordSettings from './components/PasswordSettings';
 
 import AdminDashboard from './admin/AdminDashboard';
 import UsersPage from './admin/UsersPage';
-import ProductsPage from './admin/ProductPage';
-import UserRequestsPage from './admin/UserRequestsPage';
+import ProductsPage from './admin/ProductPage';;
 import UserProfile from './admin/UserProfile';
 import RedditFeed from './dashboard/RedditFeed';
 import Profile from './dashboard/profile';
@@ -75,7 +74,7 @@ const AppRoutes = () => {
         <Route path="/admin/products" element={<ProductsPage />} />
         <Route path="/admin/users" element={<UsersPage />} />
         <Route path="/admin/users/profile/:userId" element={<UserProfile />} />
-        <Route path="/admin/requests" element={<UserRequestsPage />} />
+   
       </Routes>
 
       {/* Display ChatBot on non-admin routes (except hidden routes) */}

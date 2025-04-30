@@ -18,20 +18,20 @@ import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
 
+
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [filterOpen, setFilterOpen] = useState(false);
-  const [token, setToken] = useState(null);
-  const [reports, setReports] = useState(null);  // State for the reports data
-  const navigate = useNavigate();
-
+    const [token, setToken] = useState(null);
+    const navigate = useNavigate();
+  
   // Filter state
   const [filters, setFilters] = useState({
     timePeriod: 'last30days',
     product: 'all',
     subscriptionType: 'all'
   });
-
+  
   // Original mock data - removed revenue-related stats
   const originalStats = [
     { title: 'Active Users', value: '12,849', change: '+7.4%', icon: <Users size={20} /> },
@@ -39,7 +39,7 @@ const AdminDashboard = () => {
     { title: 'Avg. Engagement', value: '48.2m', change: '+5.3%', icon: <TrendingUp size={20} /> },
     { title: 'Support Tickets', value: '156', change: '-2.8%', icon: <MessageSquare size={20} /> },
   ];
-
+  
   const originalProducts = [
     { id: 1, name: 'AutoDCA', subscribers: 1842, growth: '+12%', status: 'Active' },
     { id: 2, name: 'AutoMBAL', subscribers: 1293, growth: '+8%', status: 'Active' },
@@ -47,14 +47,14 @@ const AdminDashboard = () => {
     { id: 4, name: 'fAIcies Interpretation', subscribers: 2104, growth: '+15%', status: 'Active' },
     { id: 5, name: 'Geomechanix', subscribers: 1587, growth: '+9%', status: 'Active' },
   ];
-
+  
   const originalSubscriptions = [
     { id: 1, company: 'TechCorp Inc.', product: 'AutoDCA + AutoMBAL', plan: 'Enterprise', date: 'Today' },
     { id: 2, company: 'Global Systems', product: 'fAIcies Interpretation', plan: 'Team', date: 'Yesterday' },
     { id: 3, company: 'InnoSoft Solutions', product: 'Prodn. Modeling', plan: 'Business', date: '2 days ago' },
     { id: 4, company: 'DataViz Corp', product: 'AutoDCA', plan: 'Professional', date: '3 days ago' },
   ];
-
+  
   const originalSupportRequests = [
     { id: 1, issue: 'API Integration Issue', product: 'AutoMBAL', priority: 'High', status: 'Open' },
     { id: 2, issue: 'Dashboard Not Loading', product: 'AutoDCA', priority: 'Medium', status: 'In Progress' },
@@ -64,7 +64,7 @@ const AdminDashboard = () => {
 
   // Filtered data states
   const [stats, setStats] = useState(originalStats);
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(originalProducts);
   const [recentSubscriptions, setRecentSubscriptions] = useState(originalSubscriptions);
   const [supportRequests, setSupportRequests] = useState(originalSupportRequests);
 
@@ -181,52 +181,6 @@ const AdminDashboard = () => {
     applyFilters();
   }, []);
 
-  // Token checking and setting
-  useEffect(() => {
-    const storedData = localStorage.getItem('linkendin');
-    const parsed = storedData && JSON.parse(storedData);
-    const token = parsed?.token;
-    if (token) {
-      setToken(token);
-    } else {
-      navigate('/login');
-    }
-  }, [navigate]);
-
-  // Fetch reports data once the token is set
-  useEffect(() => {
-    if (token) {
-      const fetchReports = async () => {
-        try {
-          const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/reports`, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-          const data = await response.json();
-          console.log('Fetched reports:', data);
-
-          // Map over the reports and create individual post rows
-          const processedReports = data.flatMap(report =>
-            report.reportedPostIds.map((postId, index) => ({
-              email: report.email,
-              postId: postId,
-              reportType: report.reportTypes[index] || 'unknown', // In case reportTypes are not aligned with postIds
-            }))
-          );
-
-          // Update the reports state with the processed report data
-          setReports(processedReports);
-        } catch (error) {
-          console.error('Error fetching reports:', error);
-        }
-      };
-
-      fetchReports();
-    }
-  }, [token]);
-
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar Component */}
@@ -335,41 +289,48 @@ const AdminDashboard = () => {
           {/* Products Section */}
           <div className="bg-white rounded-lg shadow-sm mb-6">
             <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-lg font-medium">Reported Posts</h2>
-              <Link to="/admin/reports" className="text-sm text-indigo-600 hover:underline">View all</Link>
+              <h2 className="text-lg font-medium">Product Performance</h2>
+              <Link to="/admin/products" className="text-sm text-indigo-600 hover:underline">Manage Products</Link>
             </div>
             <div className="p-6">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead>
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Post ID</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Report Type</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subscribers</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Growth</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                  {reports && reports.length > 0 ? (
-  reports.map((report, index) => (
-    <tr key={index} className="hover:bg-gray-50">
-      <td className="px-4 py-4 whitespace-nowrap">
-        <div className="font-medium text-gray-900">{report.email}</div>
-      </td>
-      <td className="px-4 py-4 whitespace-nowrap">
-        <div className="text-sm text-gray-900">{report.postId}</div>
-      </td>
-      <td className="px-4 py-4 whitespace-nowrap">
-        <span className="px-2 py-1 text-xs font-medium bg-indigo-100 text-indigo-800 rounded-full">
-          {report.reportType}
-        </span>
-      </td>
-    </tr>
-  ))
-) : (
-  <tr>
-    <td colSpan="3" className="text-center py-4">No reports available</td>
-  </tr>
-)}
+                    {products.map((product) => (
+                      <tr key={product.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div className="w-8 h-8 bg-indigo-100 rounded-md flex items-center justify-center mr-3">
+                              <Layers className="h-4 w-4 text-indigo-600" />
+                            </div>
+                            <div className="font-medium text-gray-900">{product.name}</div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">{product.subscribers.toLocaleString()}</div>
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <div className="text-sm text-green-600 font-medium">{product.growth}</div>
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            product.status === 'Active' ? 'bg-green-100 text-green-800' : 
+                            product.status === 'Maintenance' ? 'bg-yellow-100 text-yellow-800' : 
+                            'bg-red-100 text-red-800'
+                          }`}>
+                            {product.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -478,4 +439,3 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
-
