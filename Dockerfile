@@ -5,11 +5,13 @@ FROM node:22.14.0
 WORKDIR /usr/src/app
 
 # Copy the package.json and package-lock.json to install dependencies
-COPY package*.json ./
+COPY package.json ./
+
 
 # Install app dependencies
 RUN npm install
 
+RUN npm install -g vite
 # Copy the rest of the application code into the container
 COPY . .
 
