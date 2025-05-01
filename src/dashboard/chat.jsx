@@ -9,7 +9,7 @@ const ChatBot = () => {
   const [usersData, setUsersData] = useState([
     {
       id: 1,
-      name: 'John Doe',
+      name: 'JohnDoe',
       profilePic: 'https://via.placeholder.com/50?text=JD',
       lastMessage: 'Hey, I need help with a project.',
       unreadCount: 3,
@@ -22,139 +22,37 @@ const ChatBot = () => {
     },
     {
       id: 2,
-      name: 'Jane Smith',
+      name: 'JaneSmith',
       profilePic: 'https://via.placeholder.com/50?text=JS',
-      lastMessage: 'Can you tell me more about your services?',
-      unreadCount: 1,
-      chatHistory: [
-        { sender: 'user', text: 'Can you tell me more about your services?', time: new Date() },
-        { sender: 'bot', text: 'Of course! What would you like to know?', time: new Date() },
-      ],
+      lastMessage: '',
+      unreadCount: 0,
+      chatHistory: [],
     },
     {
       id: 3,
-      name: 'Dev',
-      profilePic: 'https://via.placeholder.com/50?text=AI',
-      lastMessage: 'Hello! How can I assist you today?',
+      name: 'MarkLee',
+      profilePic: 'https://via.placeholder.com/50?text=ML',
+      lastMessage: '',
       unreadCount: 0,
-      chatHistory: [
-        { sender: 'bot', text: 'Hello! How can I assist you today?', time: new Date() },
-      ],
-    },
-    {
-      id: 4,
-      name: 'John Doe',
-      profilePic: 'https://via.placeholder.com/50?text=JD',
-      lastMessage: 'Hey, I need help with a project.',
-      unreadCount: 3,
-      chatHistory: [
-        { sender: 'user', text: 'Hey, I need help with a project.', time: new Date() },
-        { sender: 'bot', text: 'Sure! What do you need help with?', time: new Date() },
-        { sender: 'user', text: 'Can you clarify something about the project?', time: new Date() },
-        { sender: 'bot', text: 'Of course, what do you need clarification on?', time: new Date() },
-      ],
-    },
-    {
-      id: 5,
-      name: 'John Doe',
-      profilePic: 'https://via.placeholder.com/50?text=JD',
-      lastMessage: 'Hey, I need help with a project.',
-      unreadCount: 3,
-      chatHistory: [
-        { sender: 'user', text: 'Hey, I need help with a project.', time: new Date() },
-        { sender: 'bot', text: 'Sure! What do you need help with?', time: new Date() },
-        { sender: 'user', text: 'Can you clarify something about the project?', time: new Date() },
-        { sender: 'bot', text: 'Of course, what do you need clarification on?', time: new Date() },
-      ],
-    },
-    {
-      id: 6,
-      name: 'John Doe',
-      profilePic: 'https://via.placeholder.com/50?text=JD',
-      lastMessage: 'Hey, I need help with a project.',
-      unreadCount: 3,
-      chatHistory: [
-        { sender: 'user', text: 'Hey, I need help with a project.', time: new Date() },
-        { sender: 'bot', text: 'Sure! What do you need help with?', time: new Date() },
-        { sender: 'user', text: 'Can you clarify something about the project?', time: new Date() },
-        { sender: 'bot', text: 'Of course, what do you need clarification on?', time: new Date() },
-      ],
-    },
-    {
-      id: 7,
-      name: 'John Doe',
-      profilePic: 'https://via.placeholder.com/50?text=JD',
-      lastMessage: 'Hey, I need help with a project.',
-      unreadCount: 3,
-      chatHistory: [
-        { sender: 'user', text: 'Hey, I need help with a project.', time: new Date() },
-        { sender: 'bot', text: 'Sure! What do you need help with?', time: new Date() },
-        { sender: 'user', text: 'Can you clarify something about the project?', time: new Date() },
-        { sender: 'bot', text: 'Of course, what do you need clarification on?', time: new Date() },
-      ],
-    },
-    {
-      id: 8,
-      name: 'John Doe',
-      profilePic: 'https://via.placeholder.com/50?text=JD',
-      lastMessage: 'Hey, I need help with a project.',
-      unreadCount: 3,
-      chatHistory: [
-        { sender: 'user', text: 'Hey, I need help with a project.', time: new Date() },
-        { sender: 'bot', text: 'Sure! What do you need help with?', time: new Date() },
-        { sender: 'user', text: 'Can you clarify something about the project?', time: new Date() },
-        { sender: 'bot', text: 'Of course, what do you need clarification on?', time: new Date() },
-      ],
-    },
-    {
-      id: 9,
-      name: 'John Doe',
-      profilePic: 'https://via.placeholder.com/50?text=JD',
-      lastMessage: 'Hey, I need help with a project.',
-      unreadCount: 3,
-      chatHistory: [
-        { sender: 'user', text: 'Hey, I need help with a project.', time: new Date() },
-        { sender: 'bot', text: 'Sure! What do you need help with?', time: new Date() },
-        { sender: 'user', text: 'Can you clarify something about the project?', time: new Date() },
-        { sender: 'bot', text: 'Of course, what do you need clarification on?', time: new Date() },
-      ],
-    },
-    {
-      id: 10,
-      name: 'John Doe',
-      profilePic: 'https://via.placeholder.com/50?text=JD',
-      lastMessage: 'Hey, I need help with a project.',
-      unreadCount: 3,
-      chatHistory: [
-        { sender: 'user', text: 'Hey, I need help with a project.', time: new Date() },
-        { sender: 'bot', text: 'Sure! What do you need help with?', time: new Date() },
-        { sender: 'user', text: 'Can you clarify something about the project?', time: new Date() },
-        { sender: 'bot', text: 'Of course, what do you need clarification on?', time: new Date() },
-      ],
-    },
-    {
-      id: 11,
-      name: 'John Doe',
-      profilePic: 'https://via.placeholder.com/50?text=JD',
-      lastMessage: 'Hey, I need help with a project.',
-      unreadCount: 3,
-      chatHistory: [
-        { sender: 'user', text: 'Hey, I need help with a project.', time: new Date() },
-        { sender: 'bot', text: 'Sure! What do you need help with?', time: new Date() },
-        { sender: 'user', text: 'Can you clarify something about the project?', time: new Date() },
-        { sender: 'bot', text: 'Of course, what do you need clarification on?', time: new Date() },
-      ],
+      chatHistory: [],
     },
   ]);
 
   const toggleChat = () => setIsOpen(!isOpen);
 
   const handleUserClick = (user) => {
+    const updatedUser = {
+      ...user,
+      unreadCount: 0,
+      chatHistory: user.chatHistory || [],
+    };
+
     const updatedUsers = usersData.map((u) =>
-      u.id === user.id ? { ...u, unreadCount: 0 } : u
+      u.id === user.id ? updatedUser : u
     );
+
     setUsersData(updatedUsers);
-    setActiveUser({ ...user, unreadCount: 0 });
+    setActiveUser(updatedUser);
   };
 
   const handleSendMessage = (e) => {
@@ -164,7 +62,7 @@ const ChatBot = () => {
       const newMessage = { sender: 'user', text: message, time: new Date() };
       const updatedUser = {
         ...activeUser,
-        chatHistory: [...activeUser.chatHistory, newMessage],
+        chatHistory: [...(activeUser.chatHistory || []), newMessage],
         lastMessage: message,
       };
       const updatedUsers = usersData.map((user) =>
@@ -220,7 +118,7 @@ const ChatBot = () => {
         className={`fixed top-0 right-0 w-full h-full max-w-md bg-white rounded-lg shadow-xl z-40 flex flex-col transition-all duration-300 ease-in-out ${
           isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
         }`}
-        style={{ minHeight: '100vh' }} // Full height for mobile screens
+        style={{ minHeight: '100vh' }}
       >
         {/* Header */}
         <div className="p-4 rounded-t-lg text-white flex items-center justify-between bg-blue-500 relative">
@@ -248,14 +146,13 @@ const ChatBot = () => {
           ) : (
             <>
               <button
-        onClick={() => setIsOpen(false)} // Close the chat window when clicking the back button
-        className="text-white hover:bg-blue-700 p-2 rounded-full"
-      >
- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-  <path d="M15 18l-6-6 6-6" />
-</svg>
-
-      </button>
+                onClick={() => setIsOpen(false)}
+                className="text-white hover:bg-blue-700 p-2 rounded-full"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
               <span className="font-semibold text-lg">Messages</span>
               <div className="relative">
                 <button
@@ -297,11 +194,11 @@ const ChatBot = () => {
                             }}
                             className="flex items-start gap-3 px-3 py-2 hover:bg-gray-100 cursor-pointer"
                           >
-                            <img
-                              src={user.profilePic}
-                              alt={user.name}
-                              className="w-10 h-10 rounded-full object-cover"
-                            />
+                            <div className="bg-blue-500 text-white rounded-full h-10 w-10 flex items-center justify-center">
+                              <span className="text-lg font-semibold">
+                                {user.name.charAt(0).toUpperCase()}
+                              </span>
+                            </div>
                             <div className="flex flex-col">
                               <span className="font-semibold text-black">{user.name}</span>
                               <span className="text-sm text-gray-600">@user{user.id}</span>
@@ -323,23 +220,25 @@ const ChatBot = () => {
 
         {/* Chat List or Conversation */}
         {!activeUser ? (
-          <div className="flex-1 p-4 overflow-y-auto bg-gray-50 ">
+          <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
             {usersData.map((user) => (
               <div
                 key={user.id}
                 className="flex items-center space-x-4 p-2 cursor-pointer hover:bg-gray-100"
                 onClick={() => handleUserClick(user)}
               >
-                <img
-                  src={user.profilePic}
-                  alt={user.name}
-                  className="w-12 h-12 rounded-full object-cover"
-                />
+                <div className="bg-blue-500 text-white rounded-full h-10 w-10 flex items-center justify-center">
+                  <span className="text-lg font-semibold">
+                    {user.name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
                 <div className="flex-1">
                   <div className="font-semibold text-sm">{user.name}</div>
                   <div className="text-xs text-gray-500">
-                    {user.lastMessage}{' '}
-                    <span className="text-xs text-gray-400">{getLastMessageTime(user.chatHistory)}</span>
+                    {user.lastMessage || 'No messages yet'}
+                    <span className="text-xs text-gray-400 ml-2">
+                      {getLastMessageTime(user.chatHistory)}
+                    </span>
                   </div>
                 </div>
                 {user.unreadCount > 0 && (
@@ -351,7 +250,7 @@ const ChatBot = () => {
             ))}
           </div>
         ) : (
-          <div className="flex-1 p- overflow-y-auto bg-gray-50">
+          <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
             {activeUser.chatHistory.map((message, index) => (
               <div key={index} className={`mb-4 ${message.sender === 'user' ? 'text-right' : ''}`}>
                 <div
@@ -378,7 +277,7 @@ const ChatBot = () => {
               placeholder="Type a message..."
               className="flex-1 p-2 rounded-l-lg bg-white border border-gray-300"
             />
-            <button type="submit" className="ml-2 p-2 bg-blue-500 text-white rounded-r-lg">
+            <button type="submit" className="ml-2 p-2 bg-blue-500 text-white rounded-full">
               Send
             </button>
           </form>

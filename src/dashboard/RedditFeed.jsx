@@ -339,6 +339,7 @@ const RedditFeed = () => {
         // Check if the response contains the 'users' array
         if (peopleData?.users && Array.isArray(peopleData.users)) {
           // Set the users data
+          
           setPeopleYouMightKnow(peopleData.users);
         } else {
           console.error('❌ No valid users data found');
@@ -350,11 +351,7 @@ const RedditFeed = () => {
     
     
     
-    const getRandomPeople = (peopleList, count) => {
-      // Shuffle the people list and pick the first 'count' people
-      const shuffled = [...peopleList].sort(() => 0.5 - Math.random());
-      return shuffled.slice(0, count);
-    };
+   
     
     console.log('ppl',peopleYouMightKnow);
 
@@ -660,7 +657,7 @@ const RedditFeed = () => {
     <li key={person.username} className="mb-4 flex justify-between items-center">
       <div className="flex flex-col">
         <h4 className="font-semibold text-gray-800">{person.name}</h4>
-        <p className="text-sm text-gray-500">@{person.username}</p>
+        <p className="text-sm text-gray-500">@{person.email}</p>
       </div>
       <div className="flex justify-end items-center space-x-4">
         <button className="px-4 py-2 bg-[#0073b1] text-white rounded-full flex items-center space-x-2 hover:bg-[#005682] text-sm">
