@@ -23,7 +23,7 @@ export default defineConfig({
     host: '0.0.0.0',
     allowedHosts: [
       'https://linkedin-one-lilac.vercel.app/' ,// Explicitly allow this host,
-      'https://frontend-vertex--vertx-458106.asia-east1.hosted.app/'
+      'hhttps://frontend-vertex-472499096510.asia-south1.run.app/'
     ],
   },
 });
