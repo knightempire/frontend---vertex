@@ -46,7 +46,7 @@ const AppRoutes = () => {
     useActiveTime(); // Call the useActiveTime hook globally
   }
 
-  const hiddenRoutes = ['/login', '/SignupPage', '/forgot-password', '/cards', '/password'];
+  const hiddenRoutes = ['/login', '/SignupPage', '/forgot-password', '/cards', '/password', '/game', '/game/business-simulation', '/game/queens', '/game/crossclimb', '/game/inference' , '/'];
 
   return (
     <>
