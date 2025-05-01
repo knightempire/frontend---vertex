@@ -26,6 +26,8 @@ const Login = () => {
     const params = new URLSearchParams(location.search);
     const urlToken = params.get('token');
 
+    console.log(  `${import.meta.env.VITE_API_URL}`); // Log the token from the URL
+
     if (urlToken) {
       // Save the OAuth JWT and go straight to feed
       localStorage.setItem('linkendin', JSON.stringify({ token: urlToken }));
