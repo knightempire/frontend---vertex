@@ -103,14 +103,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, logo }) => {
             </li> */}
             
             <li>
-              <Link 
-                to="/cards" 
-                className="flex items-center p-3 rounded-md hover:bg-gray-100"
-              >
-                <LogOut size={20} />
-                {sidebarOpen && <span className="ml-3">Logout</span>}
-              </Link>
-            </li>
+  <Link 
+    to="/login" 
+    onClick={() => {
+      localStorage.removeItem('linkendin'); // or whatever key(s) you store
+           // optional: remove other user info
+      // Add more removeItem lines if needed
+    }}
+    className="flex items-center p-3 rounded-md hover:bg-gray-100"
+  >
+    <LogOut size={20} />
+    {sidebarOpen && <span className="ml-3">Logout</span>}
+  </Link>
+</li>
+
           </ul>
         </div>
         
@@ -121,8 +127,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, logo }) => {
                 <span>AD</span>
               </div>
               <div>
-                <p className="font-medium">Admin User</p>
-                <p className="text-sm text-gray-500">admin@saasplatform.com</p>
+                <p className="font-medium">Admin </p>
+                {/* <p className="text-sm text-gray-500">admin@saasplatform.com</p> */}
               </div>
             </div>
           </div>

@@ -208,6 +208,11 @@ const fetchReports = async () => {
       },
     });
 
+    if (!response.ok) {
+      navigate(`/login`);
+      console.error('Failed to fetch reports:', response.statusText);
+      return;
+    }
 
     const data = await response.json();
 

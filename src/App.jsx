@@ -71,7 +71,7 @@ const AppRoutes = () => {
         <Route path="/game/inference" element={<Inference />} />
 
         {/* Admin routes */}
-        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin" element={<UsersPage />} />
         <Route path="/admin/requests" element={<Userrequest />} />
         <Route path="/admin/users" element={<UsersPage />} />
         <Route path="/admin/users/profile/:profileId" element={<UserProfile />} />

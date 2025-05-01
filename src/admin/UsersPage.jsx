@@ -56,7 +56,9 @@ const UsersPage = () => {
       });
 
       if (!response.ok) {
+        navigate(`/login`);
         throw new Error('Failed to fetch users');
+
       }
 
       const data = await response.json();
