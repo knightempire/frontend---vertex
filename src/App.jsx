@@ -17,6 +17,7 @@ import ViewProfile from './dashboard/viewprofile';
 import ConnectionsPage from './dashboard/Connection';
 import Game from './game/game';
 import ChatBot from './dashboard/chat';
+import Userrequest from './admin/UserRequestsPage';
 import Collection from './dashboard/collection';
 
 import BusinessSimulaton from './game/BusinessSimulation';
@@ -71,7 +72,7 @@ const AppRoutes = () => {
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/products" element={<ProductsPage />} />
+        <Route path="/admin/requests" element={<Userrequest />} />
         <Route path="/admin/users" element={<UsersPage />} />
         <Route path="/admin/users/profile/:userId" element={<UserProfile />} />
    

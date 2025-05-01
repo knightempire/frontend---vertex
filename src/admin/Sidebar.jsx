@@ -58,7 +58,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, logo }) => {
               </Link>
             </li>
             
-            <li>
+            {/* <li>
               <Link 
                 to="/admin/products" 
                 className={`flex items-center p-3 rounded-md ${isProductsPage ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-100'}`}
@@ -66,7 +66,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, logo }) => {
                 <Box size={20} />
                 {sidebarOpen && <span className="ml-3">Products</span>}
               </Link>
-            </li>
+            </li> */}
             
             <li>
               <Link 
