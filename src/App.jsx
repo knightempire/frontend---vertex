@@ -74,7 +74,7 @@ const AppRoutes = () => {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/requests" element={<Userrequest />} />
         <Route path="/admin/users" element={<UsersPage />} />
-        <Route path="/admin/users/profile/:userId" element={<UserProfile />} />
+        <Route path="/admin/users/profile/:profileId" element={<UserProfile />} />
    
       </Routes>
 

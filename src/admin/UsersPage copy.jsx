@@ -4,18 +4,6 @@ import Sidebar from './Sidebar'; // Assuming you have a Sidebar component
 import Navbar from './Navbar'; // Assuming you have a Navbar component
 import UserProfile from './UserProfile'; // Assuming you have this UserProfile component
 import logo from '../assets/linkendin.png';
-import { 
-  BarChart3, 
-  Users, 
-  ShoppingCart, 
-  Filter, 
-  ChevronDown,
-  TrendingUp,
-  MessageSquare,
-  CreditCard,
-  Layers
-} from 'lucide-react';
-
 
 const UsersPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -70,7 +58,7 @@ const UsersPage = () => {
   };
 
   const handleProfileClick = (user) => {
-    navigate(`/admin/users/profile/${user._id}`);
+    setSelectedUser(user);
   };
 
   const handleBackToList = () => {
@@ -90,23 +78,8 @@ const UsersPage = () => {
 
     // Default: List view
     return (
-      
       <div className="p-6 bg-gray-50 min-h-full">
         {/* Users Table */}
-        <div className="mb-6 bg-white rounded-lg shadow-sm p-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg font-medium">Dashboard Overview</h2>
-              <button 
-              
-                className="flex items-center text-sm text-gray-600 hover:text-indigo-600"
-              >
-                <Filter size={16} className="mr-1" />
-                <span>Filters</span>
-            
-              </button>
-            </div>
-       
-          </div>
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -114,7 +87,7 @@ const UsersPage = () => {
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
@@ -130,7 +103,7 @@ const UsersPage = () => {
                     <tr key={user._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{user.createdAt}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{user.isActive ? 'Active' : 'Inactive'}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
                         <button
                           onClick={() => handleProfileClick(user)}
@@ -170,11 +143,8 @@ const UsersPage = () => {
         {/* Navbar */}
         <Navbar />
 
-
         {/* Page Content with Scrolling */}
         <div className="flex-1 overflow-auto">
-
-          
           {renderContent()}
         </div>
       </div>
