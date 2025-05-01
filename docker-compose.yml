@@ -1,0 +1,19 @@
+
+
+services:
+  vertx_frontend: # Define a service named 'app'
+    build: . # Build the image from the Dockerfile in the current directory
+    container_name: vertx_frontend # Optional: give the container a specific name
+    ports:
+      - "8080:8080" # Map port 5000 on the host to port 5000 in the container
+    environment:
+      VITE_API_URL: ${VITE_API_URL}
+
+    restart: unless-stopped # Optional: Restart policy
+
+   
+
+networks:
+  default:
+    driver: bridge
+
